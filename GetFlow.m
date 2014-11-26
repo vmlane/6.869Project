@@ -1,4 +1,4 @@
-function [ u, v ] = GetFlow( img1, img2 )
+function [ u, v ] = GetFlow( img1, img2, prevU, prevV)
     
     % img1 and img2 assumed to be grayscale floating point images
 
@@ -39,9 +39,6 @@ function [ u, v ] = GetFlow( img1, img2 )
         for y = 1:height
             thisIdx = getSparseIdx(x, y);
             laplacianAppend(thisIdx, thisIdx, 4);
-            if thisIdx <= 0
-                thisIdx
-            end
             if x > 1
                 laplacianAppend(thisIdx, getSparseIdx(x-1, y), -1);
             end
@@ -66,11 +63,12 @@ function [ u, v ] = GetFlow( img1, img2 )
     % Compute linear flow operator
     A = [diagSparse(dx.*dx) + lambda * laplacian, diagSparse(dx .* dy);
          diagSparse(dx .* dy), diagSparse(dy.^2) + lambda * laplacian];
-    b = -[reshape(dx .* dt, [], 1); reshape(dy .* dt, [], 1)];
-    flow = A \ b; % solve linear equation
-    u = reshape(flow(1:height*width, :), height, width);
-    v = reshape(flow(height*width+1:2*height*width, :), height, width);
-    u = medianFilter(u);
-    v = medianFilter(v);
+    b = -[reshape(dx .* dt, [], 1) + lambda*laplacian*reshape(prevU, [], 1); ...
+          reshape(dy .* dt, [], 1) + lambda*laplacian*reshape(prevV, [], 1)];
+    deltaFlow = A \ b; % solve linear equation
+    u = prevU + reshape(deltaFlow(1:height*width, :), height, width);
+    v = prevV + reshape(deltaFlow(height*width+1:2*height*width, :), height, width);
+%     u = medianFilter(u);
+%     v = medianFilter(v);
 end
 
