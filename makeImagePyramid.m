@@ -4,12 +4,17 @@ function pyramid = makeImagePyramid(im,numLevels,ratio,sigma)
     % numLevels = number of pyramid levels
     % ratio = size of pyramid image / original image
     % sigma = std deviation of gaussian filter
+    
     pyramid = cell(numLevels,1);
-    P{1} = im;
+    pyramid{1} = im;  
+    out = im;
+    
+    filter = fspecial('gaussian',2*round(sigma*1.5),sigma);
+    
     for i=2:numLevels
         % Apply Gaussian Filter
-        filter = fspecial('gaussian',2*round(sigma*1.5),sigma);
-        out = imfilter(im,filter,'symmetric');
+        out = imfilter(out,filter,'symmetric');
+        out =  imresize(out,ratio,'bilinear', 'Antialiasing',false);
         % resize image
-        P{i} = imresize(out,ratio,'bilinear', 'Antialiasing',false);
+        pyramid{i} = out;
     end
