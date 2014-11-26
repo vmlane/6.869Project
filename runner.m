@@ -9,4 +9,4 @@ groundTruth = readFlowFile('./other-gt-flow/RubberWhale/flow10.flo');
 [u, v] = GetFlow(im1, im2);
 imshow(VisualizeFlow(u, v));
 
-scoreFlow(u, v, groundTruth);
+scoreFlow(u, v, groundTruth)
