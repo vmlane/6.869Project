@@ -68,7 +68,7 @@ function [ u, v ] = GetFlow( img1, img2, prevU, prevV)
     deltaFlow = A \ b; % solve linear equation
     u = prevU + reshape(deltaFlow(1:height*width, :), height, width);
     v = prevV + reshape(deltaFlow(height*width+1:2*height*width, :), height, width);
-%     u = medianFilter(u);
-%     v = medianFilter(v);
+    u = medfilt2(u);
+    v = medfilt2(v);
 end
 
