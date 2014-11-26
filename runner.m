@@ -16,5 +16,10 @@ for k=numLevels:-1:1
     u = imresize(u,size(pyramid1{k}))*(1/ratio);
     v = imresize(v,size(pyramid1{k}))*(1/ratio);
 end
-
+[u, v] = GetFlow(im1, im2);
 imshow(VisualizeFlow(u, v));
+
+addpath('./flow-code-matlab');
+groundTruth = readFlowFile('./other-gt-flow/RubberWhale/flow10.flo');
+
+scoreFlow(u, v, groundTruth);
