@@ -3,6 +3,7 @@ function [ u, v ] = GetFlow( img1, img2 )
     % img1 and img2 assumed to be grayscale floating point images
 
     [height, width] = size(img1);
+    % compute spatial & temporal partial derivatives
     dx = conv2(img1, [-1 1], 'same');
     dy = conv2(img1, [-1 1].', 'same');
     dt = img2 - img1;
@@ -18,7 +19,7 @@ function [ u, v ] = GetFlow( img1, img2 )
         sparseM = spdiags(Mrow, 0, length(Mrow), length(Mrow));
     end
 
-    % Make laplacian matrix
+    % Make laplacian operator
     totalSize = 5*(width-2)*(height-2) + 4*(2*width + 2*height - 4) + 3*4;
     laplacianX = zeros(totalSize, 1);
     laplacianY = zeros(totalSize, 1);
@@ -62,12 +63,14 @@ function [ u, v ] = GetFlow( img1, img2 )
     
     laplacian = sparse(laplacianX, laplacianY, laplacianValues, width*height, width*height);
     
+    % Compute linear flow operator
     A = [diagSparse(dx.*dx) + lambda * laplacian, diagSparse(dx .* dy);
          diagSparse(dx .* dy), diagSparse(dy.^2) + lambda * laplacian];
     b = -[reshape(dx .* dt, [], 1); reshape(dy .* dt, [], 1)];
-    flow = A \ b;
+    flow = A \ b; % solve linear equation
     u = reshape(flow(1:height*width, :), height, width);
     v = reshape(flow(height*width+1:2*height*width, :), height, width);
-
+    u = medianFilter(u);
+    v = medianFilter(v);
 end
 
