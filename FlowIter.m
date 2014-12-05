@@ -1,4 +1,4 @@
-function [ u, v ] = GetFlow( img1, img2, prevU, prevV)
+function [ u, v ] = FlowIter( img1, img2)
     
     % img1 and img2 assumed to be grayscale floating point images
 
@@ -7,7 +7,7 @@ function [ u, v ] = GetFlow( img1, img2, prevU, prevV)
     dx = conv2(img1, [-1 1], 'same');
     dy = conv2(img1, [-1 1].', 'same');
     dt = img2 - img1;
-    lambda = 0.01;
+    alpha = 0.1;
     
     % Some little helper functions
     function [ idx ] = getSparseIdx(x, y)
@@ -61,14 +61,13 @@ function [ u, v ] = GetFlow( img1, img2, prevU, prevV)
     laplacian = sparse(laplacianX, laplacianY, laplacianValues, width*height, width*height);
     
     % Compute linear flow operator
-    A = [diagSparse(dx.*dx) + lambda * laplacian, diagSparse(dx .* dy);
-         diagSparse(dx .* dy), diagSparse(dy.^2) + lambda * laplacian];
-    b = -[reshape(dx .* dt, [], 1) + lambda*laplacian*reshape(prevU, [], 1); ...
-          reshape(dy .* dt, [], 1) + lambda*laplacian*reshape(prevV, [], 1)];
+    A = [diagSparse(dx.*dx) + alpha * laplacian, diagSparse(dx .* dy);
+         diagSparse(dx .* dy), diagSparse(dy.^2) + alpha * laplacian];
+    b = -[reshape(dx .* dt, [], 1); ...
+          reshape(dy .* dt, [], 1)];
     deltaFlow = A \ b; % solve linear equation
-    u = prevU + reshape(deltaFlow(1:height*width, :), height, width);
-    v = prevV + reshape(deltaFlow(height*width+1:2*height*width, :), height, width);
-    u = medfilt2(u);
-    v = medfilt2(v);
+    u = reshape(deltaFlow(1:height*width, :), height, width);
+    v = reshape(deltaFlow(height*width+1:2*height*width, :), height, width);
+
 end
 

@@ -5,6 +5,7 @@ function [ outIm ] = applyFlow( im, u, v )
     inputPtsX = inputPtsX + u;
     inputPtsY = inputPtsY + v;
     outIm = interp2(im, inputPtsX, inputPtsY);
+    outIm(isnan(outIm)) = 0;
 
 end
 

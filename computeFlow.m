@@ -8,5 +8,10 @@ function [u,v] = computeFlow(im1,im2,numLevels,ratio,sigma)
     for k=numLevels:-1:1
         u = imresize(u,size(pyramid1{k}))*(1/ratio);
         v = imresize(v,size(pyramid1{k}))*(1/ratio);
-        [u, v] = GetFlow(pyramid1{k}, pyramid2{k}, u, v);
+        im1 = applyFlow(pyramid1{k}, u, v);
+        [du, dv] = FlowIter(im1, pyramid2{k});
+        u = u + du;
+        v = v + dv;
+        u = medfilt2(u);
+        v = medfilt2(v);
     end
