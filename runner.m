@@ -5,7 +5,7 @@ im2 = double(rgb2gray(imread('other-data/RubberWhale/frame11.png')))/255;
 groundTruth = readFlowFile('./other-gt-flow/RubberWhale/flow10.flo');
 groundTruth(abs(groundTruth) > 1000) = 0;
 
-numLevels = 1;
+numLevels = 5;
 ratio = .5;
 sigma = 1.5;
 
