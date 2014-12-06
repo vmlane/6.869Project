@@ -1,4 +1,4 @@
-function [ u, v ] = FlowIter( img1, img2)
+function [ u, v ] = FlowIter( img1, img2, laplacian)
     
     % img1 and img2 assumed to be grayscale floating point images
 
@@ -16,9 +16,6 @@ function [ u, v ] = FlowIter( img1, img2)
         sparseM = spdiags(Mrow, 0, length(Mrow), length(Mrow));
     end
 
-    % Make laplacian operator
-    laplacian = makeLaplacian(width, height);
-    
     % Compute linear flow operator
     A = [diagSparse(dx.*dx) + alpha * laplacian, diagSparse(dx .* dy);
          diagSparse(dx .* dy), diagSparse(dy.^2) + alpha * laplacian];

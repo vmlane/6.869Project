@@ -7,7 +7,7 @@ groundTruth(abs(groundTruth) > 1000) = 0;
 
 numLevels = 5;
 ratio = .5;
-sigma = 1.5;
+sigma = 1;
 
 [u, v] = computeFlow(im1,im2,numLevels,ratio,sigma);
 imshow(VisualizeFlow(-u, -v, 6));

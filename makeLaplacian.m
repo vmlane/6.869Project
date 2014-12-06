@@ -1,9 +1,10 @@
-function [ laplacian ] = makeLaplacian( width, height )
+function [ laplacian ] = makeLaplacian( width, height, img )
     % Make the Laplacian operator.  Uses memoization to make this easier.
     global laplacianInputs;
     global laplacianOutputs;
+    brightnessCutoff = 0.1;
     
-    function [ laplacian ] = inner(width, height)
+    function [ laplacian ] = inner(width, height, img)
 
         function [ idx ] = getSparseIdx(x, y)
             idx = y + height*(x-1);
@@ -19,22 +20,32 @@ function [ laplacian ] = makeLaplacian( width, height )
             laplacianValues(nextIdx) = value;
             nextIdx = nextIdx + 1;
         end
+        
+        dx = conv2(img, [-1 1], 'same');
+        dy = conv2(img, [-1 1].', 'same');
 
         for x = 1:width
             for y = 1:height
                 thisIdx = getSparseIdx(x, y);
-                laplacianAppend(thisIdx, thisIdx, 4);
+                % Determine weighting on x and y derivatives.
+                % Derivatives don't get much weighting on an edge in that
+                % direction.
+%                 xWeight = 0.9999*(abs(dx(y, x)) < brightnessCutoff) + 0.0001;
+%                 yWeight = 0.9999*(abs(dy(y, x)) < brightnessCutoff) + 0.0001;
+                xWeight = 1;
+                yWeight = 1;
+                laplacianAppend(thisIdx, thisIdx, 2*xWeight + 2*yWeight);
                 if x > 1
-                    laplacianAppend(thisIdx, getSparseIdx(x-1, y), -1);
+                    laplacianAppend(thisIdx, getSparseIdx(x-1, y), -xWeight);
                 end
                 if x < width
-                    laplacianAppend(thisIdx, getSparseIdx(x+1, y), -1);
+                    laplacianAppend(thisIdx, getSparseIdx(x+1, y), -xWeight);
                 end
                 if y > 1
-                    laplacianAppend(thisIdx, getSparseIdx(x, y-1), -1);
+                    laplacianAppend(thisIdx, getSparseIdx(x, y-1), -yWeight);
                 end
                 if y < height
-                    laplacianAppend(thisIdx, getSparseIdx(x, y+1), -1);
+                    laplacianAppend(thisIdx, getSparseIdx(x, y+1), -yWeight);
                 end
             end
         end
@@ -51,12 +62,12 @@ function [ laplacian ] = makeLaplacian( width, height )
     if isempty(laplacianInputs)
         findCol = 0;
     else
-        findCol = ismember([width, height], laplacianInputs, 'rows');
+        findCol = ismember(laplacianInputs, [width, height], 'rows');
     end
     if sum(findCol) > 0
         laplacian = laplacianOutputs{find(findCol)};
     else
-        laplacian = inner(width, height);
+        laplacian = inner(width, height, img);
         laplacianInputs = [laplacianInputs; [width, height]];
         laplacianOutputs{length(laplacianOutputs) + 1} = laplacian;
     end
