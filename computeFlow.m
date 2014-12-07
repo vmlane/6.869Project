@@ -15,7 +15,8 @@ function [u,v] = computeFlow(im1,im2,options)
     u = zeros(size(pyramid1{options.numPyramidLevels}));
     v = zeros(size(pyramid1{options.numPyramidLevels}));
     
-    
+    lastSize = 1;
+    fullSize = size(im2, 1);
     for gncIter = 1:options.numGncIters
         display(gncIter);    
         if gncIter == 1
@@ -30,21 +31,23 @@ function [u,v] = computeFlow(im1,im2,options)
         
         for k=numLevels:-1:1
             display(k);
+            thisSize = size(pyr1{k}, 1);
             % Scale the flow
-            u = imresize(u,size(pyr1{k}))*(1/options.ratio);
-            v = imresize(v,size(pyr1{k}))*(1/options.ratio);
+            u = imresize(u,size(pyr1{k}))*(thisSize / lastSize);
+            v = imresize(v,size(pyr1{k}))*(thisSize / lastSize);
 
             % Compute the flow for a single pyramid level
             [u, v] = flowNIter(pyr1{k},pyr2{k},u,v,options);
             % score the flow
-            remapU = imresize(u, size(im2)) * (1/options.ratio)^(k-1);
-            remapV = imresize(v, size(im2)) * (1/options.ratio)^(k-1);
+            remapU = imresize(u, size(im2)) * fullSize / thisSize;
+            remapV = imresize(v, size(im2)) * fullSize / thisSize;
             scoreFlow(remapU, remapV, groundTruth)
-            imshow(VisualizeFlow(remapU, remapV, 6));  
+            imshow(VisualizeFlow(remapU, remapV, 6));
+            lastSize = thisSize;
         end
         pause
-        if options.numGncIters > 1
-            newAlpha = 1 - gncIter/(options.numGncIters-1);
-            options.alpha = max(0,min(options.alpha,newAlpha));
-        end
+%         if options.numGncIters > 1
+%             newAlpha = 1 - gncIter/(options.numGncIters-1);
+%             options.alpha = max(0,min(options.alpha,newAlpha));
+%         end
     end
