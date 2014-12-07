@@ -170,12 +170,18 @@ In practice, we run multiple iterations of Eq. \ref{eq:eulerBlock} to find the f
 
 Unfortunately, there is no obvious stopping point for this algorithm.  Repeatedly minimizing the HS objective will refine the flow, making the warped image 1 look more and more like image 2.  However, this results in ``overfitting".  The ground truth flow is not in fact a perfect transformation from image 1 to image 2 - there are changes in illumination and occlusion between the two images.  Empirically, we found that running too many iterations caused the endpoint error to increase.  In our tests, we used 10 iterations, the same number used in \cite{sun}.
 
-\begin{figure*}[t]
+The results of our algorithm are shown in Figure 1.  The standard HS algorithm is predictably confused by the spinning circle in the lower left hand corner.  The boundaries are also somewhat blurry.  Finally, the shell in the bottom middle is very poorly labeled.
+
+\begin{figure}
+\includegraphics[width=0.6 \columnwidth] {frame10.png} 
+\includegraphics[width=0.39 \columnwidth] {flow-color-key.png}
+
 \includegraphics[width=\columnwidth]{10iter.png}
-\caption{Blah}
-\label{fig:long}
-\label{fig:onecol}
-\end{figure*}
+
+\includegraphics[width=\columnwidth]{ground_truth.png}
+\caption{Top: the ``RubberWhale" test image for optical flow, and a key for the optical flow visualizations in this paper.  Middle: optical flow according to our implementation of the HS algorithm.  Bottom: ground truth flow, according to manual human labeling.}
+\end{figure}
+
 
 {\small
 \bibliographystyle{ieee}
