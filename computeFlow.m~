@@ -8,15 +8,15 @@ function [u,v] = computeFlow(im1,im2,options)
     pyramid2 = makeImagePyramid(im2,options.numPyramidLevels,options.ratio,options.sigma);
     
     % Make image pyramids
-    gncPyramid1 = makeImagePyramid(im1,options.numGncLevels,options.gncRatio,options.gncSigma);
-    gncPyramid2 = makeImagePyramid(im2,options.numGncLevels,options.gncRatio,options.gncSigma);
+    gnc_pyramid1 = makeImagePyramid(im1,options.numGncLevels,options.gncRatio,options.gncSigma);
+    gnc_pyramid2 = makeImagePyramid(im2,options.numGncLevels,options.gncRatio,options.gncSigma);
 
     % initialize flow with all zeros
     u = zeros(size(pyramid1{options.numPyramidLevels}));
     v = zeros(size(pyramid1{options.numPyramidLevels}));
     
     
-    for gncIter = 1:options.numGncIters
+    for gncIter = 1:options.numIters
         display(gncIter);    
         if gncIter == 1
             numLevels = options.numPyramidLevels;
@@ -24,27 +24,26 @@ function [u,v] = computeFlow(im1,im2,options)
             pyr2 = pyramid2;
         else
             numLevels = options.numGncLevels;
-            pyr1 = gncPyramid1;
-            pyr2 = gncPyramid2;
+            pyr1 = gncPyramid1
         end
         
         for k=numLevels:-1:1
             display(k);
             % Scale the flow
-            u = imresize(u,size(pyr1{k}))*(1/options.ratio);
-            v = imresize(v,size(pyr1{k}))*(1/options.ratio);
+            u = imresize(u,size(pyramid1{k}))*(1/ratio);
+            v = imresize(v,size(pyramid1{k}))*(1/ratio);
 
             % Compute the flow for a single pyramid level
-            [u, v] = flowNIter(pyr1{k},pyr2{k},u,v,options);
-            % score the flow
-            remapU = -imresize(u, size(im2)) * (1/options.ratio)^(k-1);
-            remapV = -imresize(v, size(im2)) * (1/options.ratio)^(k-1);
+            im1 = applyFlow(pyramid1{k}, u, v);
+            [du, dv] = flowNIter(im1, pyramid2{k}, 10);
+            u = u + du;
+            v = v + dv;
+            u = medfilt2(u);
+            v = medfilt2(v);
+            remapU = -imresize(u, size(im2)) * (1/ratio)^(k-1);
+            remapV = -imresize(v, size(im2)) * (1/ratio)^(k-1);
             scoreFlow(remapU, remapV, groundTruth)
-            imshow(VisualizeFlow(remapU, remapV, 6));  
-        end
-        pause
-        if options.numGncIters > 1
-            newAlpha = 1 - gncIter/(options.numGncIters-1);
-            options.alpha = max(0,min(options.alpha,newAlpha));
+            imshow(VisualizeFlow(remapU, remapV, 6));
+            pause
         end
     end

@@ -9,7 +9,7 @@ function pyramid = makeImagePyramid(im,numLevels,ratio,sigma)
     pyramid{1} = im;  
     out = im;
     
-    filter = fspecial('gaussian',2*round(sigma*1.5),sigma);
+    filter = fspecial('gaussian',2*round(sigma*1.5)+1,sigma);
     
     for i=2:numLevels
         % Apply Gaussian Filter
