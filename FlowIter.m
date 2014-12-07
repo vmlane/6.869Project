@@ -1,7 +1,6 @@
 function [ du, dv ] = FlowIter( height, width, laplacian, dt, dx, dy, alpha)
     
     % img1 and img2 assumed to be grayscale floating point images
-    alpha = 0.1;
     
     % Some little helper functions
 

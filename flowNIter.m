@@ -6,9 +6,9 @@ for i = 1:options.numWarpIters
     [dt, dx, dy] = applyFlow(im1,im2,u,v);
     
     % Make laplacian operator
-    laplacian = makeLaplacian(width, height, im1);
+    laplacian = makeLaplacian(width, height, u, v, options);
 
-    [du, dv] = FlowIter(height,width,laplacian,dt,dx,dy);
+    [du, dv] = FlowIter(height,width,laplacian,dt,dx,dy, options.alpha);
     % apply median filtering
     u2 = u + du;
     v2 = v + dv;

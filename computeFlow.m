@@ -37,8 +37,8 @@ function [u,v] = computeFlow(im1,im2,options)
             % Compute the flow for a single pyramid level
             [u, v] = flowNIter(pyr1{k},pyr2{k},u,v,options);
             % score the flow
-            remapU = -imresize(u, size(im2)) * (1/options.ratio)^(k-1);
-            remapV = -imresize(v, size(im2)) * (1/options.ratio)^(k-1);
+            remapU = imresize(u, size(im2)) * (1/options.ratio)^(k-1);
+            remapV = imresize(v, size(im2)) * (1/options.ratio)^(k-1);
             scoreFlow(remapU, remapV, groundTruth)
             imshow(VisualizeFlow(remapU, remapV, 6));  
         end

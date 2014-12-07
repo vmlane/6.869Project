@@ -9,15 +9,16 @@ groundTruth(abs(groundTruth) > 1000) = 0;
 options = struct();
 
 options.numPyramidLevels = 4;
-options.numGncLevels = 2;
+options.numGncLevels = 4;
 options.ratio = .5;
 options.sigma = sqrt(1/options.ratio)/sqrt(2);
 options.gncRatio = 1/1.25;
 options.gncSigma = sqrt(1/options.gncRatio)/sqrt(2);
 options.alpha = 0.1;
+options.charbonnier = 2;
 
 options.numGncIters = 1;
-options.numWarpIters = 10;
+options.numWarpIters = 5;
 
 [u, v] = computeFlow(im1,im2,options);
 imshow(VisualizeFlow(-u, -v, 6));
