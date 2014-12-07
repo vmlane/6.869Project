@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}\itemsep=-1pt
+
+\bibitem{sun}
+S.~R. D.~Sun and M.~Black.
+\newblock A quantitative analysis of current practices in optical flow
+  estimation and the principles behind them.
+\newblock {\em International Journal of Computer Vision}, 10(1007), 2013.
+
+\bibitem{fleet}
+D.~Fleet and Y.~Weiss.
+\newblock Optical flow estimation.
+\newblock {\em Mathematical Models of Computer Vision: The Handbook}, pages
+  239--258, 2005.
+
+\bibitem{horn}
+B.~Horn and B.~Schunck.
+\newblock Determining optical flow.
+\newblock {\em Artificial Intelligence}, 17:185--203, 1981.
+
+\bibitem{wu}
+Y.~Wu.
+\newblock Optical flow and motion analysis, 2006.
+\newblock Northwestern University EECS432 - Advanced Computer Vision Notes
+  Series 6.
+
+\end{thebibliography}
