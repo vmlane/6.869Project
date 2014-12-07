@@ -1,4 +1,5 @@
 function [u,v] = computeFlow(im1,im2,numLevels,ratio,sigma)
+    global groundTruth;
     pyramid1 = makeImagePyramid(im1,numLevels,ratio,sigma);
     pyramid2 = makeImagePyramid(im2,numLevels,ratio,sigma);
 
@@ -15,4 +16,9 @@ function [u,v] = computeFlow(im1,im2,numLevels,ratio,sigma)
         v = v + dv;
         u = medfilt2(u);
         v = medfilt2(v);
+        remapU = -imresize(u, size(im2)) * (1/ratio)^(k-1);
+        remapV = -imresize(v, size(im2)) * (1/ratio)^(k-1);
+        scoreFlow(remapU, remapV, groundTruth)
+        imshow(VisualizeFlow(remapU, remapV, 6));
+        pause
     end
