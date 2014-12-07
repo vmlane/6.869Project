@@ -14,7 +14,7 @@ options.ratio = .5;
 options.sigma = sqrt(1/options.ratio)/sqrt(2);
 options.gncRatio = 1/1.25;
 options.gncSigma = sqrt(1/options.gncRatio)/sqrt(2);
-options.alpha = 1;
+options.alpha = 0.1;
 
 options.numGncIters = 1;
 options.numWarpIters = 10;
