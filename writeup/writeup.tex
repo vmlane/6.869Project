@@ -166,7 +166,16 @@ L(a, b) = \begin{cases}
 
 With the terms in Eq. \ref{eq:eulerBlock} defined, solving for $X$ and $Y$ is simply a matter of matrix inversion.
 
-In practice, we run multiple iterations of Eq. \ref{eq:eulerBlock} to find the final flow.  This is because the HS objective is only a linearized version of Eq. \ref{eq:discrete}, the true flow error.  For large flow values, it is not accurate.  
+In practice, we run multiple iterations of Eq. \ref{eq:eulerBlock} to find the final flow.  This is because the HS objective is only a linearized version of Eq. \ref{eq:discrete}, the true flow error.  For large flow values, it is not accurate.  After each iteration, we warp image 1 using the flow field found so far.  We then run another iteration using the warped image 1, and add the new flow to the total flow so far.
+
+Unfortunately, there is no obvious stopping point for this algorithm.  Repeatedly minimizing the HS objective will refine the flow, making the warped image 1 look more and more like image 2.  However, this results in ``overfitting".  The ground truth flow is not in fact a perfect transformation from image 1 to image 2 - there are changes in illumination and occlusion between the two images.  Empirically, we found that running too many iterations caused the endpoint error to increase.  In our tests, we used 10 iterations, the same number used in \cite{sun}.
+
+\begin{figure*}[t]
+\includegraphics[width=\columnwidth]{10iter.png}
+\caption{Blah}
+\label{fig:long}
+\label{fig:onecol}
+\end{figure*}
 
 {\small
 \bibliographystyle{ieee}
