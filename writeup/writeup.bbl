@@ -17,6 +17,12 @@ B.~Horn and B.~Schunck.
 \newblock Determining optical flow.
 \newblock {\em Artificial Intelligence}, 17:185--203, 1981.
 
+\bibitem{middlebury}
+J.~L. S. R. M. J.~B. S.~Baker, D.~Scharstein and R.~Szeliski.
+\newblock A database and evaluation methodology for optical flow.
+\newblock {\em IEEE International Conference on Computer Vision}, pages 1--8,
+  2007.
+
 \bibitem{wu}
 Y.~Wu.
 \newblock Optical flow and motion analysis, 2006.

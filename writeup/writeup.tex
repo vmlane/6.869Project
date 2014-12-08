@@ -170,9 +170,10 @@ In practice, we run multiple iterations of Eq. \ref{eq:eulerBlock} to find the f
 
 Unfortunately, there is no obvious stopping point for this algorithm.  Repeatedly minimizing the HS objective will refine the flow, making the warped image 1 look more and more like image 2.  However, this results in ``overfitting".  The ground truth flow is not in fact a perfect transformation from image 1 to image 2 - there are changes in illumination and occlusion between the two images.  Empirically, we found that running too many iterations caused the endpoint error to increase.  In our tests, we used 10 iterations, the same number used in \cite{sun}.
 
-The results of our algorithm are shown in Figure 1.  The standard HS algorithm is predictably confused by the spinning circle in the lower left hand corner.  The boundaries are also somewhat blurry.  Finally, the shell in the bottom middle is very poorly labeled.
+The results of our algorithm are shown in Figure \ref{fig:hs}.  The standard HS algorithm is predictably confused by the spinning circle in the lower left hand corner.  (Spinning objects violate the assumption that the flow has a small gradient.)  The boundaries are also somewhat blurry.  To measure the accuracy of our flow estimate, we use average endpoint error (EPE), which is the average displacement between each flow vector and its ground truth counterpart.  The EPE on this image is 0.322.
 
 \begin{figure}
+
 \includegraphics[width=0.6 \columnwidth] {frame10.png} 
 \includegraphics[width=0.39 \columnwidth] {flow-color-key.png}
 
@@ -180,8 +181,47 @@ The results of our algorithm are shown in Figure 1.  The standard HS algorithm i
 
 \includegraphics[width=\columnwidth]{ground_truth.png}
 \caption{Top: the ``RubberWhale" test image for optical flow, and a key for the optical flow visualizations in this paper.  Middle: optical flow according to our implementation of the HS algorithm.  Bottom: ground truth flow, according to manual human labeling.}
+\label{fig:hs}
 \end{figure}
 
+We test our implementation on the Middlebury optical flow benchmark \cite{middlebury}, using the 8 publicly-available training images.  The results (along with those from our improved algorithms) are shown in Figure \ref{fig:table}.
+
+\begin{figure}
+
+\begin{tabular} {|r | r | r|}
+\hline
+Image name & HS & Multi-res HS \\
+\hline 
+Dimetrodon & 0.5068 &  0.3832 \\
+Grove2 & 1.4710 & 0.4281 \\
+Grove3 &  2.4258 & 1.2280 \\
+Hydrangea & 1.2445 & 0.8741 \\
+RubberWhale & 0.3221 & 0.3630 \\
+Urban2 & 6.9539 & 1.7945 \\
+Urban3 & 5.4880 & 1.8573 \\
+Venus & 1.9489 & 0.7809 \\
+\hline
+Average & 2.5451 & 0.9636 \\
+\hline
+
+\end{tabular}
+
+\caption{Endpoint error by test image, for the various algorithms presented in this paper.}
+\label{fig:table}
+\end{figure}
+
+From Figure \ref{fig:table}, it is obvious that our implementation of HS does not perform well on all test cases.  Figure \ref{fig:urban2} shows the test image with the highest error (``Urban2").
+
+\begin{figure}
+\includegraphics[width=0.48 \columnwidth] {urban2_input.png} 
+\includegraphics[width=0.48 \columnwidth] {urban2.png}
+
+\includegraphics[width=0.48 \columnwidth] {urban2_multires.png} 
+\includegraphics[width=0.48 \columnwidth] {urban2_truth.png} 
+
+\caption{Results for the ``Urban2" test image.  Top left: one of the two input frames.  Top right: optical flow using the HS algorithm, with average error 6.95.  Bottom left: optical flow using multi-resolution HS, with average error 1.79.  Bottom right: ground truth.  The flow magnitude is too large for HS to handle correctly.  Using multi-resolution optimization, we can locate large flows with much better accuracy.}
+\label{fig:urban2}
+\end{figure}
 
 {\small
 \bibliographystyle{ieee}

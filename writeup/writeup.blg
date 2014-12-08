@@ -3,6 +3,18 @@ The style file: ieee.bst
 Database file #1: egbib.bib
 Name 1 in "D. Sun, S. Roth, and M.J. Black" has a comma at the end for entry sun
 while executing---line 1073 of file ieee.bst
+Name 1 in "S. Baker, D. Scharstein, J. Lewis, S. Roth, M. J. Black, and R. Szeliski" has a comma at the end for entry middlebury
+while executing---line 1073 of file ieee.bst
+Too many commas in name 1 of "S. Baker, D. Scharstein, J. Lewis, S. Roth, M. J. Black, and R. Szeliski" for entry middlebury
+while executing---line 1073 of file ieee.bst
+Too many commas in name 1 of "S. Baker, D. Scharstein, J. Lewis, S. Roth, M. J. Black, and R. Szeliski" for entry middlebury
+while executing---line 1073 of file ieee.bst
 Name 1 in "D. Sun, S. Roth, and M.J. Black" has a comma at the end for entry sun
 while executing---line 1116 of file ieee.bst
-(There were 2 error messages)
+Name 1 in "S. Baker, D. Scharstein, J. Lewis, S. Roth, M. J. Black, and R. Szeliski" has a comma at the end for entry middlebury
+while executing---line 1116 of file ieee.bst
+Too many commas in name 1 of "S. Baker, D. Scharstein, J. Lewis, S. Roth, M. J. Black, and R. Szeliski" for entry middlebury
+while executing---line 1116 of file ieee.bst
+Too many commas in name 1 of "S. Baker, D. Scharstein, J. Lewis, S. Roth, M. J. Black, and R. Szeliski" for entry middlebury
+while executing---line 1116 of file ieee.bst
+(There were 8 error messages)
