@@ -395,8 +395,6 @@ For example, HS uses a quadratic penalty, in which $f(Reg) = Reg$, so $W(i, j) =
 
 The results of this algorithm on the Middlebury training set are shown in Figure \ref{fig:table}, under the ``Charbonnier" column.  We used $\epsilon=0.01$, with all other parameters the same as our HS implementation.  Adding the Charbonnier penalty to HS results in a significant performance boost on some test cases.  For example, in Figure \ref{fig:charbonnier}, we see that using a Charbonnier penalty instead of a quadatic penalty gives better resolution at the edges of objects.  For the RubberWhale image shown in this figure, the regular HS algorithm achieves an EPE of 0.32, while HS with Charbonnier penalty achieves an EPE of 0.23.
 
-However, adding the Charbonnier penalty seems to decrease performance on test cases with large magnitude flows, like the Urban2 example discussed in Figure \ref{fig:urban2}.  To fix this problem, we add multi-resolution optimization to our Charbonnier algorithm.  As shown in the ``Multi-res Charbonnier" column of Figure \ref{fig:table}, this resolves the issue as expected.
-
 \begin{figure}
 \includegraphics[width=0.48 \columnwidth] {10iter_crop.png} 
 \includegraphics[width=0.48 \columnwidth] {charbonnier_crop.png}
@@ -404,6 +402,25 @@ However, adding the Charbonnier penalty seems to decrease performance on test ca
 \caption{Comparing HS (left) and HS with Charbonnier penalty (right) on a detail in the RubberWhale test image.  The Charbonnier penalty results in crisper edges and better definition in smaller regions.}
 \label{fig:charbonnier}
 \end{figure}
+
+However, adding the Charbonnier penalty seems to decrease performance on test cases with large magnitude flows, like the Urban2 example discussed in Figure \ref{fig:urban2}.  To fix this problem, we add multi-resolution optimization to our Charbonnier algorithm.  This results in a marked improvement in performance (see the ``Multi-res Charbonnier" column of Figure \ref{fig:table}), beating the multi-resolution HS algorithm on every test case.
+
+To summarize all of the algorithms presented in this paper, Figure \ref{fig:venus} compares their performance on the ``Venus" image.  We can see that running that solving for the flow at multiple resolutions helps discover regions of large flow, like in the lower left corner of the image.  On the right-center of the image, adding a Charbonnier penalty makes the top boundary of the newspaper cleaner.
+
+\begin{figure}
+\includegraphics[width=0.48 \columnwidth] {venus.png} 
+\includegraphics[width=0.48 \columnwidth] {venus_gt.png}
+
+\includegraphics[width=0.48 \columnwidth] {venus_1.png} 
+\includegraphics[width=0.48 \columnwidth] {venus_2.png}
+
+\includegraphics[width=0.48 \columnwidth] {venus_3.png} 
+\includegraphics[width=0.48 \columnwidth] {venus_4.png}
+
+\caption{Comparing all 4 algorithm variations on the Venus test image.  Top: one frame of the original test images; ground truth flow.  Middle: HS; HS with multi-resolution optimization.  Bottom: Charbonnier; Charbonnier with multi-resolution optimization.  Using a multi-resolution pyramid helps the algorithm discover large areas of high-magnitude flow, while the Charbonnier penalty makes edges somewhat better-defined.}
+\label{fig:venus}
+\end{figure}
+
 {\small
 \bibliographystyle{ieee}
 \bibliography{egbib}
