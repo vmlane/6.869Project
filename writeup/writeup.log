@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.10.1)  7 DEC 2014 20:36
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.10.1)  7 DEC 2014 23:26
 entering extended mode
 **C:/Users/Felix/Documents/6.819/6.869Project/writeup/writeup.tex
 (C:/Users/Felix/Documents/6.819/6.869Project/writeup/writeup.tex
@@ -392,30 +392,6 @@ File: ground_truth.png Graphic file (type png)
 <use ground_truth.png>
 Package pdftex.def Info: ground_truth.png used on input line 182.
 (pdftex.def)             Requested size: 237.13594pt x 157.55463pt.
- <urban2_input.png, id=66, 642.4pt x 481.8pt>
-File: urban2_input.png Graphic file (type png)
-
-<use urban2_input.png>
-Package pdftex.def Info: urban2_input.png used on input line 216.
-(pdftex.def)             Requested size: 113.82423pt x 85.36754pt.
- <urban2.png, id=67, 398.73103pt x 299.04828pt>
-File: urban2.png Graphic file (type png)
-
-<use urban2.png>
-Package pdftex.def Info: urban2.png used on input line 217.
-(pdftex.def)             Requested size: 113.82423pt x 85.36653pt.
- <urban2_multires.png, id=68, 398.73103pt x 299.04828pt>
-File: urban2_multires.png Graphic file (type png)
-
-<use urban2_multires.png>
-Package pdftex.def Info: urban2_multires.png used on input line 219.
-(pdftex.def)             Requested size: 113.82423pt x 85.36653pt.
- <urban2_truth.png, id=69, 398.73103pt x 299.04828pt>
-File: urban2_truth.png Graphic file (type png)
-
-<use urban2_truth.png>
-Package pdftex.def Info: urban2_truth.png used on input line 220.
-(pdftex.def)             Requested size: 113.82423pt x 85.36653pt.
 
 
 LaTeX Warning: Text page 3 contains only floats.
@@ -424,42 +400,73 @@ LaTeX Warning: Text page 3 contains only floats.
  <C:/Users/Felix/Documents/6.819/6.869Project/writeup/flow-color-key.png (PNG c
 opy)> <C:/Users/Felix/Documents/6.819/6.869Project/writeup/10iter.png (PNG copy
 )> <C:/Users/Felix/Documents/6.819/6.869Project/writeup/ground_truth.png (PNG c
-opy)>] (C:\Users\Felix\Documents\6.819\6.869Project\writeup\writeup.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 231.
+opy)>] <urban2_input.png, id=76, 642.4pt x 481.8pt>
+File: urban2_input.png Graphic file (type png)
+ <use urban2_input.png>
+Package pdftex.def Info: urban2_input.png used on input line 216.
+(pdftex.def)             Requested size: 113.82423pt x 85.36754pt.
 
-[4
+<urban2.png, id=77, 398.73103pt x 299.04828pt>
+File: urban2.png Graphic file (type png)
+ <use urban2.png>
+Package pdftex.def Info: urban2.png used on input line 217.
+(pdftex.def)             Requested size: 113.82423pt x 85.36653pt.
 
- <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2_input.png (PNG cop
-y)> <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2.png (PNG copy)>
- <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2_multires.png (PNG 
-copy)> <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2_truth.png (P
-NG copy)>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 231.
- (C:\Users\Felix\Documents\6.819\6.869Project\writeup\writeup.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 231.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 231.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 231.
+<urban2_multires.png, id=78, 398.73103pt x 299.04828pt>
+File: urban2_multires.png Graphic file (type png)
+
+<use urban2_multires.png>
+Package pdftex.def Info: urban2_multires.png used on input line 219.
+(pdftex.def)             Requested size: 113.82423pt x 85.36653pt.
+ <urban2_truth.png, id=79, 398.73103pt x 299.04828pt>
+File: urban2_truth.png Graphic file (type png)
+
+<use urban2_truth.png>
+Package pdftex.def Info: urban2_truth.png used on input line 220.
+(pdftex.def)             Requested size: 113.82423pt x 85.36653pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4 <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2_input.png (PNG 
+copy)> <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2.png (PNG cop
+y)> <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2_multires.png (P
+NG copy)> <C:/Users/Felix/Documents/6.819/6.869Project/writeup/urban2_truth.png
+ (PNG copy)>]
+Overfull \hbox (6.28844pt too wide) detected at line 333
+ []$[]   [] []$ 
+ []
+
+(C:\Users\Felix\Documents\6.819\6.869Project\writeup\writeup.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 342.
+ [5]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 342.
+
+(C:\Users\Felix\Documents\6.819\6.869Project\writeup\writeup.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 342.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 342.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 342.
  ) 
 Here is how much of TeX's memory you used:
- 6211 strings out of 493921
- 88949 string characters out of 3147282
- 178881 words of memory out of 3000000
- 9387 multiletter control sequences out of 15000+200000
+ 6243 strings out of 493921
+ 89363 string characters out of 3147282
+ 181111 words of memory out of 3000000
+ 9402 multiletter control sequences out of 15000+200000
  24078 words of font info for 59 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 34i,13n,26p,870b,347s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 34i,13n,26p,870b,334s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program File
 s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKTeX
  2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fon
 ts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/
 public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/am
 sfonts/cm/cmr7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
-cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Pr
-ogram Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTe
-X 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on writeup.pdf (4 pages, 1610069 bytes).
+cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pf
+b><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Fil
+es/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files/MiKTeX 2.9/fon
+ts/type1/urw/times/utmri8a.pfb>
+Output written on writeup.pdf (5 pages, 1632116 bytes).
 PDF statistics:
- 123 PDF objects out of 1000 (max. 8388607)
- 35 named destinations out of 1000 (max. 500000)
+ 157 PDF objects out of 1000 (max. 8388607)
+ 52 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

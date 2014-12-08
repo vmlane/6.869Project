@@ -131,14 +131,14 @@ I_y (I_x X + I_y Y + I_t) = \lambda (Y_{xx} + Y_{yy})
 Sometimes, these constraints are shown in block matrix form:
 \begin{multline} \label{eq:eulerBlock}
 \left[ \begin{array}{cc}
-I_x^2 + \lambda (D_x^2 + D_y^2) & I_x I_y\\
-I_x I_y & I_y^2 + \lambda (D_x^2 + D_y^2) \\
+I_x^2 - \lambda (D_x^2 + D_y^2) & I_x I_y\\
+I_x I_y & I_y^2 - \lambda (D_x^2 + D_y^2) \\
 \end{array} \right]
 \left[\begin{array}{c}
 X \\
 Y
 \end{array} \right] \\
-=\left[ \begin{array}{c}
+=-\left[ \begin{array}{c}
 I_x I_t \\
 I_y I_t
 \end{array} \right]
@@ -147,7 +147,7 @@ There are some subtleties hiding in this equation.  $X$ and $Y$ are vectors of l
 
 \section{Implementing the Euler-Lagrange Solution}
 
-We implemented a program in MATLAB that finds the flow vectors $X$ and $Y$ given two images.  We use the block matrix formulation (Eq. \ref{eq:eulerBlock}) to express the system of equations.  The image derivatives are computed and converted into diagonal sparse matrices.  We approximate $D_x^2 + D_y^2$ with convolution by the kernel
+We implemented a program in MATLAB that finds the flow vectors $X$ and $Y$ given two images.  We use the block matrix formulation (Eq. \ref{eq:eulerBlock}) to express the system of equations.  The image derivatives are computed and converted into diagonal sparse matrices.  We approximate $-(D_x^2 + D_y^2)$ with convolution by the kernel
 \begin{equation} \label{eq:laplacian}
 \left[ \begin{array}{ccc}
 0 & -1 & 0 \\
@@ -155,7 +155,7 @@ We implemented a program in MATLAB that finds the flow vectors $X$ and $Y$ given
 0 & -1 & 0
 \end{array} \right]
 \end{equation}
-, known as the Laplacian kernel.  This means that $L = D_x^2 + D_y^2$ is a $(wh) \times (wh)$ sparse matrix, with approximately $5wh$ non-zero entries.  It is defined as follows:
+, known as the Laplacian kernel.  This means that $L = -(D_x^2 + D_y^2)$ is a $(wh) \times (wh)$ sparse matrix, with approximately $5wh$ non-zero entries.  It is defined as follows:
 \begin{equation} \label{eq:laplacian2}
 L(a, b) = \begin{cases}
 4 & \text{if } a = b \\
@@ -164,13 +164,13 @@ L(a, b) = \begin{cases}
 \end{cases}
 \end{equation}
 
-With the terms in Eq. \ref{eq:eulerBlock} defined, solving for $X$ and $Y$ is simply a matter of matrix inversion.
+We calculate the image derivatives $I_x$ and $I_y$ using a 5-point filter $\frac{1}{12}[-1, 8, 0, -8, 1]$, and we used $\lambda = 0.1$.  With the terms in Eq. \ref{eq:eulerBlock} defined, solving for $X$ and $Y$ is simply a matter of matrix inversion.
 
 In practice, we run multiple iterations of Eq. \ref{eq:eulerBlock} to find the final flow.  This is because the HS objective is only a linearized version of Eq. \ref{eq:discrete}, the true flow error.  For large flow values, it is not accurate.  After each iteration, we warp image 1 using the flow field found so far.  We then run another iteration using the warped image 1, and add the new flow to the total flow so far.
 
 Unfortunately, there is no obvious stopping point for this algorithm.  Repeatedly minimizing the HS objective will refine the flow, making the warped image 1 look more and more like image 2.  However, this results in ``overfitting".  The ground truth flow is not in fact a perfect transformation from image 1 to image 2 - there are changes in illumination and occlusion between the two images.  Empirically, we found that running too many iterations caused the endpoint error to increase.  In our tests, we used 10 iterations, the same number used in \cite{sun}.
 
-The results of our algorithm are shown in Figure \ref{fig:hs}.  The standard HS algorithm is predictably confused by the spinning circle in the lower left hand corner.  (Spinning objects violate the assumption that the flow has a small gradient.)  The boundaries are also somewhat blurry.  To measure the accuracy of our flow estimate, we use average endpoint error (EPE), which is the average displacement between each flow vector and its ground truth counterpart.  The EPE on this image is 0.322.
+The results of our algorithm are shown in Figure \ref{fig:hs} for a sample image.  The standard HS algorithm is predictably confused by the spinning circle in the lower left hand corner.  (Spinning objects violate the assumption that the flow has a small gradient.)  The boundaries are also somewhat blurry.  To measure the accuracy of our flow estimate, we use average endpoint error (EPE), which is the average displacement between each flow vector and its ground truth counterpart.  The EPE on this image is 0.322.
 
 \begin{figure}
 
@@ -210,7 +210,7 @@ Average & 2.5451 & 0.9636 \\
 \label{fig:table}
 \end{figure}
 
-From Figure \ref{fig:table}, it is obvious that our implementation of HS does not perform well on all test cases.  Figure \ref{fig:urban2} shows the test image with the highest error (``Urban2").
+From Figure \ref{fig:table}, it is obvious that our implementation of HS does not perform equally well on all test cases.  Figure \ref{fig:urban2} shows the test image with the highest error (``Urban2").  Urban2 has flow vectors with much greater magnitude, compared to RubberWhale.  The building in the foreground moves particularly quickly between frames.  The displacement is 5 pixels on average, which is further than the spatial derivatives can propagate information.  Therefore, HS cannot track the displacement of the building.  To fix this problem, we will use multi-resolution optimization later in this paper.
 
 \begin{figure}
 \includegraphics[width=0.48 \columnwidth] {urban2_input.png} 
@@ -223,6 +223,117 @@ From Figure \ref{fig:table}, it is obvious that our implementation of HS does no
 \label{fig:urban2}
 \end{figure}
 
+\section{Solving Optical Flow with a Charbonnier Penalty}
+
+We would now like to use the Charbonnier penalty in our flow objective function.  With the Charbonnier penalty on flow smoothness, our objective function becomes
+\begin{multline} \label{eq:objectivec}
+e = \int \int_{img} (I_x \cdot X + I_y \cdot Y + I_t)^2 + \\
+\lambda \sqrt{X_x^2 + X_y^2 + Y_x^2 + Y_y^2 + \epsilon} \; dA 
+\end{multline}
+
+To derive a minimum for this function, it's best to express it in discrete form:
+\begin{multline} \label{eq:objectivecDiscrete}
+e = \sum_{i,j} (I_x(i, j) X(i, j) + I_y(i, j) Y(i, j) + I_t(i, j))^2 \\
++ \lambda \sqrt{
+\begin{array}{c}
+(X(i, j) - X(i-1, j))^2 \\
++ (X(i,j) - X(i,j-1))^2 \\
++ (Y(i,j) - Y(i-1, j))^2 \\
++ (Y(i,j) - Y(i,j-1))^2 + \epsilon
+\end{array}
+}
+\end{multline}
+To save space, let us name the error and regularization terms:
+\begin{multline} \label{eq:errorTerm}
+Err(i, j) = I_x(i, j) X(i, j) \\
++ I_y(i, j) Y(i, j) + I_t(i, j)
+\end{multline}
+\begin{equation} \label{eq:regTerm}
+Reg(i,j) = (X(i,j) - X(i-1,j))^2 + ...
+\end{equation}
+
+Now, our objective function becomes:
+\begin{equation} \label{eq:shortobjcdis}
+e = \sum_{i,j} Err(i,j)^2 + \lambda \sqrt{Reg(i,j) + \epsilon }
+\end{equation}
+To minimize the objective function in Eq. \ref{eq:shortobjcdis}, we take the straightforward approach: calculate a derivative with respect to $X(i, j)$.  By setting each derivative equal to $0$, we hope to get an approximation for the $X$ and $Y$ that minimize $e$.
+\begin{equation}
+\begin{aligned}
+&\frac{\partial e}{\partial X(i, j)} = \frac{\partial Err(i,j)}{\partial X(i, j)} \cdot 2 Err(i, j) \\
+&+ \lambda \frac{\partial Reg(i,j)}{\partial X(i, j)} \cdot \frac{1}{2} (Reg(i, j) + \epsilon)^{-0.5}  \\
+&+ \lambda \frac{\partial Reg(i+1,j)}{\partial X(i, j)} \cdot \frac{1}{2} (Reg(i+1, j) + \epsilon)^{-0.5}  \\
+&+ \lambda \frac{\partial Reg(i,j+1)}{\partial X(i, j)} \cdot \frac{1}{2} (Reg(i, j+1) + \epsilon)^{-0.5}
+\end{aligned}
+\label{eq:dedx}
+\end{equation}
+Notice that only one error term depends on $X(i, j)$, but three separate regularization terms depend on $X(i, j)$.
+
+Now, we want to evaluate the individual partial derivatives:
+\begin{equation} \label{eq:derrdx}
+\frac{\partial Err(i,j)}{\partial X(i, j)} = I_x(i, j)
+\end{equation}
+\begin{equation} \label{eq:dreg1dx}
+\begin{aligned}
+&\frac{\partial Reg(i,j)}{\partial X(i, j)} \\
+&= 2(X(i, j) - X(i-1, j)) + 2(X(i, j) - X(i, j-1)) \\
+&= 2X(i,j) - X(i-1, j) - X(i,j-1)
+\end{aligned}
+\end{equation}
+\begin{equation} \label{eq:dreg2dx}
+\frac{\partial Reg(i+1,j)}{\partial X(i, j)} = -2(X(i+1,j) - X(i,j))
+\end{equation}
+\begin{equation} \label{eq:dreg3dx}
+\frac{\partial Reg(i,j+1)}{\partial X(i, j)} = -2(X(i,j+1) - X(i,j))
+\end{equation}
+
+Finally, we assume that nearby regularization terms are approximately equal: $Reg(i, j) \approx Reg(i+1,j) \approx Reg(i,j+1)$.  We can now simplify the derivative in Eq. \ref{eq:dedx}, resulting in a very familiar form:
+\begin{equation} \label{eq:leastsq}
+\begin{aligned}
+0 = \frac{\partial e}{\partial X(i, j)} &= 2I_x(i, j) Err(i, j)  \\
++\lambda(&\\
+&4X(i, j) - X(i+1,j) \\
+&- X(i-1,j) - X(i,j+1) - X(i,j-1) \\
+&)\cdot (Reg(i, j) + \epsilon) ^{-0.5}
+\end{aligned}
+\end{equation}
+
+Note that the terms in parentheses are exactly $(D_{xx} + D_{yy}) X$, the sum of the second derivatives of $X$ evaluated at $(i, j)$.  Also, $(Reg(i, j) + \epsilon)^{-0.5}$ is the only term not linear in $X$.  Therefore, we can use iteratively-reweighted least squares to solve this equation.  In this formulation,
+\begin{equation} \label{eq:weights}
+W(i,j) = (Reg(i,j) + \epsilon)^{-0.5}
+\end{equation}
+will be the weights.  We will repeatedly solve for $X$ and $Y$, recompute the weights, then re-solve for $X$ and $Y$.  Our derivative constraint in Eq. \ref{eq:leastsq} now becomes
+\begin{equation} \label{eq:leastsqx}
+\begin{aligned}
+2I_x (I_x X + I_y Y + I_t) \\
+ -\lambda(D_{xx} + D_{yy}) X \cdot W = 0
+\end{aligned}
+\end{equation}
+
+There exists an analogous equation obtained by taking a derivative with respect to $Y$:
+\begin{equation} \label{eq:leastsqy}
+\begin{aligned}
+2I_y (I_x X + I_y Y + I_t) \\
+ -\lambda(D_{xx} + D_{yy}) Y \cdot W = 0
+\end{aligned}
+\end{equation}
+We can combine all $2wh$ equations into block matrix form, to obtain an equation very similar to Eq. \ref{eq:eulerBlock}:
+\begin{multline} \label{eq:leastsqBlock}
+\left[ \begin{array}{cc}
+I_x^2 - \lambda W (D_x^2 + D_y^2) & I_x I_y\\
+I_x I_y & I_y^2 - \lambda W (D_x^2 + D_y^2) \\
+\end{array} \right]
+\left[\begin{array}{c}
+X \\
+Y
+\end{array} \right] \\
+=-\left[ \begin{array}{c}
+I_x I_t \\
+I_y I_t
+\end{array} \right]
+\end{multline}
+Once again, an aside on notation is necessary here.  The term $\lambda W (D_x^2 + D_y^2) X$ refers to the following steps: (1) evaluate the sum of the second derivatives at $X$ using the Laplacian filter.  Put these values in a column vector of length $wh$, because $X$ is a column vector and $D_x$ is an operator.  (2) Multiply the column vector by the diagonal matrix $\lambda W$.
+
+To solve for the flow using this equation, we use the same technique developed for solving the original HS equation, with one addition: we recalculate $W$ at every turn.  $W$ is recalculated using the values of $X$ and $Y$ found in the last iteration, according to Eq. \ref{eq:weights}.
 {\small
 \bibliographystyle{ieee}
 \bibliography{egbib}
