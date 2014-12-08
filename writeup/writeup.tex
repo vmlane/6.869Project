@@ -221,21 +221,40 @@ We test our implementation on the Middlebury optical flow benchmark \cite{middle
 \end{figure}
 
 \begin{figure}
-\begin{tabular} {|r | r | r|}
+\begin{tabular} {|r | r | r| r |}
 \hline
-Image name & HS & Multi-res HS \\
+Image name & HS & Multi-res HS & Charbonnier \\
 \hline 
-Dimetrodon & 0.5068 &  0.3832 \\
-Grove2 & 1.4710 & 0.4281 \\
-Grove3 &  2.4258 & 1.2280 \\
-Hydrangea & 1.2445 & 0.8741 \\
-RubberWhale & 0.3221 & 0.3630 \\
-Urban2 & 6.9539 & 1.7945 \\
-Urban3 & 5.4880 & 1.8573 \\
-Venus & 1.9489 & 0.7809 \\
+Dimetrodon & 0.5068 &  0.3832 & 0.4365 \\
+Grove2 & 1.4710 & 0.4281 & 1.5171\\
+Grove3 &  2.4258 & 1.2280 & 2.4279\\
+Hydrangea & 1.2445 & 0.8741 & 0.8515\\
+RubberWhale & 0.3221 & 0.3630 & 0.2266\\
+Urban2 & 6.9539 & 1.7945 & 6.5737\\
+Urban3 & 5.4880 & 1.8573 & 10.0828\\
+Venus & 1.9489 & 0.7809 & 1.9970\\
 \hline
-Average & 2.5451 & 0.9636 \\
+Average & 2.5451 & 0.9636 & 3.0141 \\
 \hline
+
+\end{tabular}
+\begin{tabular} {|r | r |}
+\hline
+& Multi-res \\
+Image name &  Charbonnier \\
+\hline 
+Dimetrodon & 0.2954 \\
+Grove2 & 0.2618 \\
+Grove3 & 1.0128 \\
+Hydrangea & 0.6237   \\
+RubberWhale & 0.3083 \\
+Urban2 & 1.3724 \\
+Urban3 & 1.3881 \\
+Venus & 0.6191 \\
+\hline
+Average & 0.7352\\
+\hline
+
 
 \end{tabular}
 
@@ -367,6 +386,24 @@ I_y I_t
 Once again, an aside on notation is necessary here.  The term $\lambda W (D_x^2 + D_y^2) X$ refers to the following steps: (1) evaluate the sum of the second derivatives at $X$ using the Laplacian filter.  Put these values in a column vector of length $wh$, because $X$ is a column vector and $D_x$ is an operator.  (2) Multiply the column vector by the diagonal matrix $\lambda W$.
 
 To solve for the flow using this equation, we use the same technique developed for solving the original HS equation, with one addition: we recalculate $W$ at every turn.  $W$ is recalculated using the values of $X$ and $Y$ found in the last iteration, according to Eq. \ref{eq:weights}.
+
+Note that this technique can be applied to any penalty function.  For a penalty function $f(Reg)$, the weight update rule is 
+\begin{equation} \label{eq:genericpenalty}
+W(i, j) = \frac{\partial f}{\partial Reg} (Reg(i, j))
+\end{equation}
+For example, HS uses a quadratic penalty, in which $f(Reg) = Reg$, so $W(i, j) = 1$.  As expected, this gives us the iterative scheme we used to solve the HS objective.
+
+The results of this algorithm on the Middlebury training set are shown in Figure \ref{fig:table}, under the ``Charbonnier" column.  We used $\epsilon=0.01$, with all other parameters the same as our HS implementation.  Adding the Charbonnier penalty to HS results in a significant performance boost on some test cases.  For example, in Figure \ref{fig:charbonnier}, we see that using a Charbonnier penalty instead of a quadatic penalty gives better resolution at the edges of objects.  For the RubberWhale image shown in this figure, the regular HS algorithm achieves an EPE of 0.32, while HS with Charbonnier penalty achieves an EPE of 0.23.
+
+However, adding the Charbonnier penalty seems to decrease performance on test cases with large magnitude flows, like the Urban2 example discussed in Figure \ref{fig:urban2}.  To fix this problem, we add multi-resolution optimization to our Charbonnier algorithm.  As shown in the ``Multi-res Charbonnier" column of Figure \ref{fig:table}, this resolves the issue as expected.
+
+\begin{figure}
+\includegraphics[width=0.48 \columnwidth] {10iter_crop.png} 
+\includegraphics[width=0.48 \columnwidth] {charbonnier_crop.png}
+
+\caption{Comparing HS (left) and HS with Charbonnier penalty (right) on a detail in the RubberWhale test image.  The Charbonnier penalty results in crisper edges and better definition in smaller regions.}
+\label{fig:charbonnier}
+\end{figure}
 {\small
 \bibliographystyle{ieee}
 \bibliography{egbib}
