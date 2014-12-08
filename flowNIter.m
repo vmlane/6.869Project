@@ -10,12 +10,14 @@ for i = 1:options.numWarpIters
 
     [du, dv] = FlowIter(height,width,laplacian,dt,dx,dy, options.alpha);
     % apply median filtering
-    u2 = u + du;
-    v2 = v + dv;
-    u2 = medfilt2(u2,[5,5],'symmetric');
-    v2 = medfilt2(v2,[5,5],'symmetric');
-    du = u2 - u;
-    dv = v2 - v;
+    if ~isempty(options.medfiltsize)
+        u2 = u + du;
+        v2 = v + dv;
+        u2 = medfilt2(u2,options.medfiltsize,'symmetric');
+        v2 = medfilt2(v2,options.medfiltsize,'symmetric');
+        du = u2 - u;
+        dv = v2 - v;
+    end
     % update u and v
     u = u + du;
     v = v + dv;

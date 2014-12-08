@@ -43,24 +43,44 @@
 \citation{sun}
 \citation{middlebury}
 \newlabel{eq:laplacian2}{{17}{3}{\hskip -1em.~Implementing the Euler-Lagrange Solution}{equation.4.17}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Endpoint error by test image, for the various algorithms presented in this paper.\relax }}{3}{figure.caption.1}}
-\newlabel{fig:table}{{3}{3}{Endpoint error by test image, for the various algorithms presented in this paper.\relax }{figure.caption.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}\hskip -1em.\nobreakspace  {}Solving Optical Flow with a Charbonnier Penalty}{3}{section.5}}
-\newlabel{eq:objectivec}{{18}{3}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Top: the ``RubberWhale" test image for optical flow, and a key for the optical flow visualizations in this paper. Middle: optical flow according to our implementation of the HS algorithm. Bottom: ground truth flow, according to manual human labeling.\relax }}{3}{figure.caption.1}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:hs}{{1}{3}{Top: the ``RubberWhale" test image for optical flow, and a key for the optical flow visualizations in this paper. Middle: optical flow according to our implementation of the HS algorithm. Bottom: ground truth flow, according to manual human labeling.\relax }{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}\hskip -1em.\nobreakspace  {}Multi-Resolution Optimization}{3}{section.5}}
+\newlabel{fig:hydragea3}{{2a}{4}{Hydrangea: 3 pyramid levels \\ Score: .3796\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:hydragea3}{{a}{4}{Hydrangea: 3 pyramid levels \\ Score: .3796\relax }{figure.caption.2}{}}
+\newlabel{fig:hydrangea5}{{2b}{4}{Hydrangea: 5 pyramid levels \\ Score: .3127\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:hydrangea5}{{b}{4}{Hydrangea: 5 pyramid levels \\ Score: .3127\relax }{figure.caption.2}{}}
+\newlabel{fig:hydrangea6}{{2c}{4}{Hydrangea: 6 pyramid levels \\ Score: .3135 \relax }{figure.caption.2}{}}
+\newlabel{sub@fig:hydrangea6}{{c}{4}{Hydrangea: 6 pyramid levels \\ Score: .3135 \relax }{figure.caption.2}{}}
+\newlabel{fig:urban3}{{2d}{4}{Urban: 3 pyramid levels \\ Score: 1.9045\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:urban3}{{d}{4}{Urban: 3 pyramid levels \\ Score: 1.9045\relax }{figure.caption.2}{}}
+\newlabel{fig:urban6}{{2e}{4}{Urban: 6 pyramid levels \\ Score: 1.0641\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:urban6}{{e}{4}{Urban: 6 pyramid levels \\ Score: 1.0641\relax }{figure.caption.2}{}}
+\newlabel{fig:urban9}{{2f}{4}{Urban: 9 pyramid levels \\ Score: 0.9838\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:urban9}{{f}{4}{Urban: 9 pyramid levels \\ Score: 0.9838\relax }{figure.caption.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Results for different numbers of pyramid levels for the Hydrangea and Urban test images. As the pyramid levels increase, the optical flow estimate improves. For the hydrangea (top row), the flow estimate for the non-hydrangea part of the image decreases since there is no movement in that part of the image. For the urban image (bottom row), the flow estimate of the edge of the large object grows closer to the flow estimate of the inner region of the object. \relax }}{4}{figure.caption.2}}
+\newlabel{fig:multires}{{2}{4}{Results for different numbers of pyramid levels for the Hydrangea and Urban test images. As the pyramid levels increase, the optical flow estimate improves. For the hydrangea (top row), the flow estimate for the non-hydrangea part of the image decreases since there is no movement in that part of the image. For the urban image (bottom row), the flow estimate of the edge of the large object grows closer to the flow estimate of the inner region of the object. \relax }{figure.caption.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Endpoint error by test image, for the various algorithms presented in this paper.\relax }}{4}{figure.caption.3}}
+\newlabel{fig:table}{{3}{4}{Endpoint error by test image, for the various algorithms presented in this paper.\relax }{figure.caption.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Results for the ``Urban2" test image. Top left: one of the two input frames. Top right: optical flow using the HS algorithm, with average error 6.95. Bottom left: optical flow using multi-resolution HS, with average error 1.79. Bottom right: ground truth. The flow magnitude is too large for HS to handle correctly. Using multi-resolution optimization, we can locate large flows with much better accuracy.\relax }}{4}{figure.caption.4}}
 \newlabel{fig:urban2}{{4}{4}{Results for the ``Urban2" test image. Top left: one of the two input frames. Top right: optical flow using the HS algorithm, with average error 6.95. Bottom left: optical flow using multi-resolution HS, with average error 1.79. Bottom right: ground truth. The flow magnitude is too large for HS to handle correctly. Using multi-resolution optimization, we can locate large flows with much better accuracy.\relax }{figure.caption.4}{}}
-\newlabel{eq:objectivecDiscrete}{{19}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.19}{}}
-\newlabel{eq:errorTerm}{{20}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.20}{}}
-\newlabel{eq:regTerm}{{21}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.21}{}}
-\newlabel{eq:shortobjcdis}{{22}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.22}{}}
-\newlabel{eq:dedx}{{23}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.23}{}}
-\newlabel{eq:derrdx}{{24}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.24}{}}
-\newlabel{eq:dreg1dx}{{25}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.25}{}}
-\newlabel{eq:dreg2dx}{{26}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.26}{}}
-\newlabel{eq:dreg3dx}{{27}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.27}{}}
-\newlabel{eq:leastsq}{{28}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.28}{}}
-\newlabel{eq:weights}{{29}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.29}{}}
-\newlabel{eq:leastsqx}{{30}{4}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.30}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}\hskip -1em.\nobreakspace  {}Median Filtering}{5}{section.6}}
+\newlabel{fig:medFiltTable}{{6}{5}{\hskip -1em.~Median Filtering}{section.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}\hskip -1em.\nobreakspace  {}Solving Optical Flow with a Charbonnier Penalty}{5}{section.7}}
+\newlabel{eq:objectivec}{{18}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.18}{}}
+\newlabel{eq:objectivecDiscrete}{{19}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.19}{}}
+\newlabel{eq:errorTerm}{{20}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.20}{}}
+\newlabel{eq:regTerm}{{21}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.21}{}}
+\newlabel{eq:shortobjcdis}{{22}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.22}{}}
+\newlabel{eq:dedx}{{23}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.23}{}}
+\newlabel{eq:derrdx}{{24}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.24}{}}
+\newlabel{eq:dreg1dx}{{25}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.25}{}}
+\newlabel{eq:dreg2dx}{{26}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.26}{}}
+\newlabel{eq:dreg3dx}{{27}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.27}{}}
+\newlabel{eq:leastsq}{{28}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.28}{}}
+\newlabel{eq:weights}{{29}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.29}{}}
+\newlabel{eq:leastsqx}{{30}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.30}{}}
 \bibstyle{ieee}
 \bibdata{egbib}
 \bibcite{sun}{1}
@@ -68,5 +88,5 @@
 \bibcite{horn}{3}
 \bibcite{middlebury}{4}
 \bibcite{wu}{5}
-\newlabel{eq:leastsqy}{{31}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.31}{}}
-\newlabel{eq:leastsqBlock}{{32}{5}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.5.32}{}}
+\newlabel{eq:leastsqy}{{31}{6}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.31}{}}
+\newlabel{eq:leastsqBlock}{{32}{6}{\hskip -1em.~Solving Optical Flow with a Charbonnier Penalty}{equation.7.32}{}}
