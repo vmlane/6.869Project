@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{subcaption}
 
 % Include other packages here, before hyperref.
 
@@ -172,6 +173,8 @@ Our algorithm uses incremental multi-resolution optimization. It constructs an i
 
 Test cases in which large objects moved required more pyramid levels than those in which small objects moved, the larger the object, the more pyramid levels required to achieve the best score. Too many pyramid levels worsened the score, this is likely to due the fact that at the lowest level the object becomes too small and no noticeable movement occurs.
 
+\begin{figure}
+
 The results of our algorithm are shown in Figure \ref{fig:hs}.  The standard HS algorithm is predictably confused by the spinning circle in the lower left hand corner.  (Spinning objects violate the assumption that the flow has a small gradient.)  The boundaries are also somewhat blurry.  To measure the accuracy of our flow estimate, we use average endpoint error (EPE), which is the average displacement between each flow vector and its ground truth counterpart.  The EPE on this image is 0.322.
 
 \begin{figure}
@@ -188,7 +191,26 @@ The results of our algorithm are shown in Figure \ref{fig:hs}.  The standard HS 
 
 We test our implementation on the Middlebury optical flow benchmark \cite{middlebury}, using the 8 publicly-available training images.  The results (along with those from our improved algorithms) are shown in Figure \ref{fig:table}.
 
-\begin{figure}
+\begin{figure}[t]
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth] {hydragea_3levels.jpg}
+		\caption{Hydrangea: 3 pyramide levels}
+		\label{fig:hydragea3}
+	\end{subfigure}\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth] {hydragea_5levels.jpg} 
+		\caption{Hydrangea: 5 pyramide levels}
+		\label{fig:hydrangea5}
+	\end{subfigure}\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=\textwidth] {hydragea_6levels.jpg} 
+		\caption{Hydrangea: 6 pyramide levels}
+		\label{fig:hydrangea6}
+	\end{subfigure}
+	\caption{Results for different numbers of pyramid levels for the Hydrangea and Urban2 test images.  Top row: Hydrangea with 3, 5, and 6 pyramid levels.  Bottom: Urban2 with 3,6, and 9 pyramid levels. For each image, the score of the optical flow increases as the number of pyramids increases, up until the last level shown. }
+	\label{fig:multires}
+\end{figure}
 
 \begin{tabular} {|r | r | r|}
 \hline
