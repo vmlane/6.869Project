@@ -8,7 +8,7 @@ for i = 1:options.numWarpIters
     % Make laplacian operator
     laplacian = makeLaplacian(width, height, u, v, options);
 
-    [du, dv] = FlowIter(height,width,laplacian,dt,dx,dy, options.alpha);
+    [du, dv] = FlowIter(height,width,laplacian,dt,dx,dy,options);
     % apply median filtering
     if ~isempty(options.medfiltsize)
         u2 = u + du;

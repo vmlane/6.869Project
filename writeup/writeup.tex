@@ -192,7 +192,7 @@ We test our implementation on the Middlebury optical flow benchmark \cite{middle
 		\centering
 		\includegraphics[width=\textwidth] {hydragea_3levels.jpg}
 		\caption{Hydrangea: 3 pyramid levels \\ Score: .3796}
-		\label{fig:hydragea3}
+		\label{fig:hydrangea3}
 	\end{subfigure}\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
@@ -224,7 +224,7 @@ We test our implementation on the Middlebury optical flow benchmark \cite{middle
         \caption{Urban: 9 pyramid levels \\ Score: 0.9838}
         \label{fig:urban9}
     \end{subfigure}
-	\caption{Results for different numbers of pyramid levels for the Hydrangea and Urban test images. As the pyramid levels increase, the optical flow estimate improves. For the hydrangea (top row), the flow estimate for the non-hydrangea part of the image decreases since there is no movement in that part of the image. For the urban image (bottom row), the flow estimate of the edge of the large object grows closer to the flow estimate of the inner region of the object. }
+	\caption{Results for different numbers of pyramid levels for the Hydrangea (top) and Urban (bottom) test images from the Middlebury dataset. As the pyramid levels increase, the optical flow estimate improves. For the hydrangea, the flow estimate for the non-hydrangea part of the image decreases since there is no movement in that part of the image. For the urban image, the flow estimate of the edge of the large object becomes more uniform as the number of pyramid levels increases. }
 	\label{fig:multires}
 \end{figure*}
 
@@ -272,7 +272,7 @@ Average & 0.7352\\
 
 From Figure \ref{fig:table}, it is obvious that our implementation of HS does not perform equally well on all test cases.  Figure \ref{fig:urban2} shows the test image with the highest error (``Urban2").  Urban2 has flow vectors with much greater magnitude, compared to RubberWhale.  The building in the foreground moves particularly quickly between frames.  The displacement is 5 pixels on average, which is further than the spatial derivatives can propagate information.  Therefore, HS cannot track the displacement of the building.  
 \section{Multi-Resolution Optimization}
-To improve estimates of large displacment, our algorithm use incremental multi-resolution optimization. It constructs an image pyramid, using gaussian filtering at each level. The optical flow is first computed for the image at the smallest level and it is is used as the initial estimate for the next-largest pyramid level, this is repeated until the largest pyramid level is reached. Multi-resoltion not only decreases the convergence time, but it increases accuracy when large moving objects of uniform brightness. Accuracy improves because at the largest pyramid level, the optical flow algorithm only detects movement of the edges of the object. However, the algorithm better detects the movement of the entire object when mult-resolution optimization is used, because the flow of the objects inner pixels is propogated through the pyramid levels.
+To improve estimates of large displacment, our algorithm use incremental multi-resolution optimization. It constructs an image pyramid, using gaussian filtering at each level. The optical flow is first computed for the image at the smallest level and it is is used as the initial estimate for the next-largest pyramid level, this is repeated until the largest pyramid level is reached. Multi-resoltion not only decreases the convergence time, but it increases accuracy when large moving objects of uniform brightness. Accuracy improves because at the largest pyramid level, the optical flow algorithm only detects movement of the edges of the object. However, the algorithm better detects the movement of the entire object when multi-resolution optimization is used, because the flow of the objects inner pixels is propogated through the pyramid levels.
 Test cases in which large objects moved required more pyramid levels than those in which small objects moved, the larger the object, the more pyramid levels required to achieve the best score. Too many pyramid levels worsened the score, this is likely to due the fact that at the lowest level the object becomes too small and no noticeable movement occurs.
 
 \begin{figure}
@@ -282,29 +282,32 @@ Test cases in which large objects moved required more pyramid levels than those 
 \includegraphics[width=0.48 \columnwidth] {urban2_multires.png} 
 \includegraphics[width=0.48 \columnwidth] {urban2_truth.png} 
 
-\caption{Results for the ``Urban2" test image.  Top left: one of the two input frames.  Top right: optical flow using the HS algorithm, with average error 6.95.  Bottom left: optical flow using multi-resolution HS, with average error 1.79.  Bottom right: ground truth.  The flow magnitude is too large for HS to handle correctly.  Using multi-resolution optimization, we can locate large flows with much better accuracy.}
+\caption{Results for the ``Urban2" test image.  Top left: one of the two input frames.  Top right: optical flow using the HS algorithm, with average error 6.95.  Bottom left: optical flow using Classic++, with average error 1.79.  Bottom right: ground truth.  The flow magnitude is too large for HS to handle correctly.  Using classic++, we can locate large flows with much better accuracy.}
 \label{fig:urban2}
 \end{figure}
 
 \section{Median Filtering}
-Applying a median filter between each multi-resolution iteration improves the optical flow estimation by eliminating outliers. We applied various sizes of median filters and discovered that each image had a different optimal size of median filter. However, small changes in the size of the median filter had a relatively small impact on improving the optical flow estimation. Based on the data \ref{fig:medFiltTable}, the best median filter size to apply to all images is 9x9.
+Applying a median filter between each iteration at each pyramid level significantly improves the optical flow estimation by eliminating outliers. We applied various sizes of median filters and discovered that each image had a different optimal size of median filter. However, for most images, while adding a filter had a significant score impact, changes in the size of the median filter had a small impact on improving the optical flow estimation.  Based on the data \ref{fig:medFiltTable}, the best median filter size to apply to all images is 9x9, since increasing the size to 13x13 resulted in very small (less than 2\%) improvements. Certain images had much more significant improvements when a median filter applied, images with the greatest improvement had high optical flow estimation scores and the objects moving in the image were larger than in the images with less improvement.
 
-\begin{tabularx}{\textwidth} {|X |X |X |X |X |X}
+\begin{figure*}
+\begin{tabularx}{1.0\textwidth} {|C |X |X |X |X |X|}
 \hline
-Image name & No Filter & 5x5 & 9x9 & 13x13 & 15x15 \\
+ & No Filter & 5x5 & 9x9 & 13x13 & 15x15 \\
 \hline 
-Hydrangea & 0.7417 & 0.6730 & 0.6605 & 0.6730 & 0.6783 \\
+Hydrangea & 0.7417 & 0.6730 & \bf{0.6605} & 0.6643 & 0.6783 \\
 \hline 
-RubberWhale & 0.3351 & 0.3210 & 0.3053 & 0.3022 &  0.3035\\
+RubberWhale & 0.3351 & 0.3210 & 0.3053 & \bf{0.3022} &  0.3035\\
 \hline 
-Urban2 &  1.6571 & 0.9838 & 0.8949 & 0.8692 & 0.8620\\
+Urban2 &  1.6571 & 0.9838 & 0.8949 & 0.8692 & \bf{0.8620}\\
+\hline 
+Venus &  1.0443 & .6232 & 0.5716 & \bf{0.5696} &  0.5725 \\
 \hline
-\label{fig:medFiltTable}
-\caption{Score for optical flow estimation with different median filter sizes. We computed the flow at the optimal number of pyramid levels determined from testing with the 5x5 median filer.}
 \end{tabularx}
+\label{fig:medFiltTable}
+\caption{Score for optical flow estimation with different median filter sizes. We computed the flow at the optimal number of pyramid levels determined from testing with the 5x5 median filter.}
+\end{figure*}
 
 \section{Solving Optical Flow with a Charbonnier Penalty}
-
 We would now like to use the Charbonnier penalty in our flow objective function.  With the Charbonnier penalty on flow smoothness, our objective function becomes
 \begin{multline} \label{eq:objectivec}
 e = \int \int_{img} (I_x \cdot X + I_y \cdot Y + I_t)^2 + \\
@@ -445,7 +448,7 @@ To summarize all of the algorithms presented in this paper, Figure \ref{fig:venu
 \includegraphics[width=0.48 \columnwidth] {venus_3.png} 
 \includegraphics[width=0.48 \columnwidth] {venus_4.png}
 
-\caption{Comparing all 4 algorithm variations on the Venus test image.  Top: one frame of the original test images; ground truth flow.  Middle: HS; HS with multi-resolution optimization.  Bottom: Charbonnier; Charbonnier with multi-resolution optimization.  Using a multi-resolution pyramid helps the algorithm discover large areas of high-magnitude flow, while the Charbonnier penalty makes edges somewhat better-defined.}
+\caption{Comparing all four algorithm variations on the Venus test image from the Middlebury dataset.  Top: one frame of the original test images; ground truth flow.  Middle: HS; Classic++.  Bottom: Charbonnier; Charbonnier with multi-resolution optimization.  Using a multi-resolution pyramid helps the algorithm discover large areas of high-magnitude flow, while the Charbonnier penalty makes edges somewhat better-defined.}
 \label{fig:venus}
 \end{figure}
 

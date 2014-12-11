@@ -45,7 +45,7 @@ function [u,v] = computeFlow(im1,im2,options)
             imshow(VisualizeFlow(remapU, remapV, 6));
             lastSize = thisSize;
         end
-        pause
+%         pause
 %         if options.numGncIters > 1
 %             newAlpha = 1 - gncIter/(options.numGncIters-1);
 %             options.alpha = max(0,min(options.alpha,newAlpha));

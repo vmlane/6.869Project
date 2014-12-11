@@ -1,4 +1,4 @@
-function [ du, dv ] = FlowIter( height, width, laplacian, dt, dx, dy, alpha)
+function [ du, dv ] = FlowIter( height, width, laplacian, dt, dx, dy, options)
     
     % img1 and img2 assumed to be grayscale floating point images
     
@@ -9,11 +9,8 @@ function [ du, dv ] = FlowIter( height, width, laplacian, dt, dx, dy, alpha)
         sparseM = spdiags(Mrow, 0, length(Mrow), length(Mrow));
     end
 
+    alpha = options.alpha;
     % Compute linear flow operator
-    if alpha == 1
-    elseif alpha > 0
-    elseif alpha == 0
-    end
     
     A = [diagSparse(dx.*dx) + alpha * laplacian, diagSparse(dx .* dy);
          diagSparse(dx .* dy), diagSparse(dy.^2) + alpha * laplacian];
@@ -24,9 +21,11 @@ function [ du, dv ] = FlowIter( height, width, laplacian, dt, dx, dy, alpha)
     dv = reshape(deltaFlow(height*width+1:2*height*width, :), height, width);
 
     % limit the incremental flow
-    du(du > 1) = 1;
-    du(du < -1) = -1;
-    dv(dv > 1) = 1;
-    dv(dv < -1) = -1;
+    if options.limit
+        du(du > 1) = 1;
+        du(du < -1) = -1;
+        dv(dv > 1) = 1;
+        dv(dv < -1) = -1;
+    end
 end
 
