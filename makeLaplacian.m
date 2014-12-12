@@ -29,12 +29,18 @@ function [ laplacian ] = makeLaplacian( width, height, u, v, options )
             % Determine weighting on x and y derivatives.
             % Derivatives don't get much weighting on an edge in that
             % direction.
-            if options.charbonnier == 1
+            if options.penalty == 1
                 xWeight = 1;
                 yWeight = 1;
-            else
+            elseif options.penalty == 2
+                % Charbonnier penalty.
+                % phi(x) = (x + e)^1/2
+                % phi'(x) = 1/2 (x + e)^-1/2
                 xWeight = gradU(y, x)*(gradU(y, x)^2 + epsilon) .^ -0.5 + epsilon;
                 yWeight = gradV(y, x)*(gradV(y, x)^2 + epsilon) .^ -0.5 + epsilon;
+            else
+                
+                
             end
             laplacianAppend(thisIdx, thisIdx, 2*xWeight + 2*yWeight);
             if x > 1
