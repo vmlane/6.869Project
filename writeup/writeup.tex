@@ -248,27 +248,27 @@ Average & 2.5451 & 0.9636 & 3.0141 \\
 \hline
 
 \end{tabular}
-\begin{tabular} {|r | r | r|}
+\begin{tabular} {|r | r | r| r|}
 \hline
-& Multi-res & Multi-res \\
-Image name &  Charbonnier & Lorentzian \\
+& Multi-res & M.R. convex & M.R. \\
+Image name & Charbonnier & Charbonnier & Lorentzian \\
 \hline 
-Dimetrodon & 0.2954 & 0.3248 \\
-Grove2 & 0.2618 & 0.3494 \\
-Grove3 & 1.0128 & 1.1173\\
-Hydrangea & 0.6237 & 0.7342  \\
-RubberWhale & 0.3083 & 0.3327 \\
-Urban2 & 1.3724 & 1.5081 \\
-Urban3 & 1.3881 & 1.5605\\
-Venus & 0.6191 & 0.7012\\
+Dimetrodon & 0.2954 & 0.2902 & 0.3248 \\
+Grove2 & 0.2618 & 0.2446 & 0.3494 \\
+Grove3 & 1.0128 & 0.9226 & 1.1173\\
+Hydrangea & 0.6237 & 0.5881 & 0.7342  \\
+RubberWhale & 0.3083 & 0.2727 & 0.3327 \\
+Urban2 & 1.3724 & 1.1514 & 1.5081 \\
+Urban3 & 1.3881 & 1.1727 & 1.5605\\
+Venus & 0.6191 & 0.5672 & 0.7012\\
 \hline
-Average & 0.7352 & 0.8285 \\
+Average & 0.7352 & 0.6512 & 0.8285 \\
 \hline
 
 
 \end{tabular}
 
-\caption{Endpoint error by test image, for the various algorithms presented in this paper.}
+\caption{Endpoint error by test image, for the various algorithms presented in this paper.  All multi-resolution experiments in this table were run with 5 pyramid levels, and 5 iterations of flow computation per level. A 5x5 median filter was applied after each iteration.}
 \label{fig:table}
 \end{figure}
 
@@ -438,6 +438,8 @@ The results of this algorithm on the Middlebury training set are shown in Figure
 \end{figure}
 
 However, adding the Charbonnier penalty seems to decrease performance on test cases with large magnitude flows, like the Urban2 example discussed in Figure \ref{fig:urban2}.  To fix this problem, we add multi-resolution optimization to our Charbonnier algorithm.  This results in a marked improvement in performance (see the ``Multi-res Charbonnier" column of Figure \ref{fig:table}), beating the multi-resolution HS algorithm on every test case.
+
+We also experimented with a more convex version of the Charbonnier penalty, with $f(Reg) = (Reg + \epsilon)^{0.75}$.  This gives a marginal improvement in performance, summarized in Figure \ref{fig:table}, under ``M.R. convex Charbonnier".
 
 We can use Eq. \ref{eq:genericpenalty} to easily apply the Lorentzian penalty to the flow smoothness term.  The Lorentzian penalty is even more leniant towards large jumps in flow than the Charbonnier penalty - in fact, it is concave, not convex, with respect to flow gradient.  It is defined as:
 \begin{equation} \label{eq:lor}

@@ -1,6 +1,6 @@
 addpath('./flow-code-matlab');
-% titles = {'Dimetrodon', 'Grove2', 'Grove3', 'Hydrangea', 'RubberWhale', 'Urban2', 'Urban3', 'Venus'};
-titles = {'Urban2'};
+titles = {'Dimetrodon', 'Grove2', 'Grove3', 'Hydrangea', 'RubberWhale', 'Urban2', 'Urban3', 'Venus'};
+% titles = {'Venus'};
 nTitles = length(titles);
 results = [];
 for i = 1:nTitles
@@ -19,7 +19,7 @@ for i = 1:nTitles
     options.gncRatio = 1/1.25;
     options.gncSigma = sqrt(1/options.gncRatio)/sqrt(2);
     options.alpha = 0.1;
-    options.penalty = 2;
+    options.penalty = 4;
     options.limit = false;
     
     m = 5;

@@ -39,12 +39,19 @@ function [ laplacian ] = makeLaplacian( width, height, u, v, options )
                 % phi'(x) = 1/2 (x + e)^-1/2
                 xWeight = gradU(y,x) * (gradU(y, x)^2 + epsilon) .^ -0.5 + epsilon;
                 yWeight = gradV(y,x) * (gradV(y, x)^2 + epsilon) .^ -0.5 + epsilon;
-            else
+            elseif options.penalty == 3
                 % Lorentzian penalty.
                 % phi(x) = log(1+x/(2sigma^2))
                 % phi'(x) = 1/(2sigma^2 + x)
                 xWeight = 1/(2*sigma^2 + gradU(y, x)^2);
                 yWeight = 1/(2*sigma^2 + gradV(y, x)^2);
+            elseif options.penalty == 4
+                % Slightly-more-convex Charbonnier peanlty.
+                % phi(x) = (x + e)^(0.45)
+                % phi'(x) = 1/0.45 (x + e)^(-0.55)
+                xWeight = gradU(y,x) * (gradU(y, x)^2 + epsilon) .^ -0.25 + epsilon;
+                yWeight = gradV(y,x) * (gradV(y, x)^2 + epsilon) .^ -0.25 + epsilon;
+
             end
             laplacianAppend(thisIdx, thisIdx, 2*xWeight + 2*yWeight);
             if x > 1
