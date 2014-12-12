@@ -1,0 +1,5 @@
+describe analysis of different forms of smoothing and regularization proposal
+what application would you like to apply optical flow to?  
+What changes would you make to the Sun et al approach?
+
+change abstract

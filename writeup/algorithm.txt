@@ -1,0 +1,43 @@
+convert to b&w
+set classic++ settings
+	bi-cubic interpolation
+	charbonnier method
+	spatial filters
+	a 
+	sig
+	rho
+	lambda
+compute flow field
+	construct image pyramid
+	construct gnc image pyramid
+	iterate over num GNC iterations
+		if 1st iteration: numLevels = num pyramid levels
+		else: numLevels = num gnc levels
+
+		iterate over numLevels
+			if 1st iteration
+				images = pyramid_images
+			else
+				images = gnc_pyramid images
+			uv = scale flow to current pyramid level
+			run flow method on subsampled images (uv) 
+		Update GNC parameters (linearly)
+
+flow method for subsampled images
+	iterate over num warp iterations
+		compute spatial & temporal partial derivatives
+		compute linear flow operator --> based on alpha
+		solve linear equation
+		limit the incremental flow to (-1,1)
+		Perform median filtering to remove outliers
+		update the flow fields (uv=uv+duv)
+
+compute linear flow operator
+	set Laplacian operator
+	Replicated the operator for u & v
+	Do color processing
+		(calculate Ix2,Iy2,Ixy,Itx,Ity)
+		Calcuate duu,dvv,duv
+	Compute the operator
+		A
+		b
