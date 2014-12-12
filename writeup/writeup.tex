@@ -248,21 +248,21 @@ Average & 2.5451 & 0.9636 & 3.0141 \\
 \hline
 
 \end{tabular}
-\begin{tabular} {|r | r |}
+\begin{tabular} {|r | r | r|}
 \hline
-& Multi-res \\
-Image name &  Charbonnier \\
+& Multi-res & Multi-res \\
+Image name &  Charbonnier & Lorentzian \\
 \hline 
-Dimetrodon & 0.2954 \\
-Grove2 & 0.2618 \\
-Grove3 & 1.0128 \\
-Hydrangea & 0.6237   \\
-RubberWhale & 0.3083 \\
-Urban2 & 1.3724 \\
-Urban3 & 1.3881 \\
-Venus & 0.6191 \\
+Dimetrodon & 0.2954 & 0.3248 \\
+Grove2 & 0.2618 & 0.3494 \\
+Grove3 & 1.0128 & 1.1173\\
+Hydrangea & 0.6237 & 0.7342  \\
+RubberWhale & 0.3083 & 0.3327 \\
+Urban2 & 1.3724 & 1.5081 \\
+Urban3 & 1.3881 & 1.5605\\
+Venus & 0.6191 & 0.7012\\
 \hline
-Average & 0.7352\\
+Average & 0.7352 & 0.8285 \\
 \hline
 
 
@@ -291,6 +291,7 @@ Test cases in which large objects moved required more pyramid levels than those 
 \section{Smoothing}
 Applying a median filter between each iteration at each pyramid level significantly improves the optical flow estimation by eliminating outliers. We applied various sizes of median filters and discovered that each image had a different optimal size of median filter. However, for most images, while adding a filter had a significant score impact, changes in the size of the median filter had a small impact on improving the optical flow estimation.  Based on the data \ref{fig:medFiltTable}, the best median filter size to apply to all images is 9x9, since increasing the size to 13x13 resulted in very small (less than 2\%) improvements. Certain images had much more significant improvements when a median filter applied, images with the greatest improvement had high optical flow estimation scores and the objects moving in the image were larger than in the images with less improvement.
 Between each iteration of computing the flow, we used two different interpolation methods, cubic and bi-cubic. Bi-cubic interpolation resulted in better performance. The average optical flow score of the Middlebury dataset for bi-cubic interpolation was $0.6338$ and for cubic interpolation was $0.6631$. Therefore, the bi-cubic interpolation resulted in a five-percent improvement. For both filter types we used 5 pyramid levels, the charbonnier penalty function, a 9x9 median filter.
+
 \begin{figure*}
 \begin{tabularx}{1.0\textwidth} {|X |X |X |X |X |X|}
 \hline
@@ -309,12 +310,13 @@ Venus &  1.0443 & .6232 & 0.5716 & \bf{0.5696} &  0.5725 \\
 \label{fig:medFiltTable}
 \end{figure*}
 
-\section{Solving Optical Flow with a Charbonnier Penalty}
-We would now like to use the Charbonnier penalty in our flow objective function.  With the Charbonnier penalty on flow smoothness, our objective function becomes
+\section{Solving Optical Flow with Other Penalties}
+We would now like to change the penalty on flow smoothness.  We will experiment with some ``robust penalties", which tolerate some sudden jumps in flow value, allowing for sharper flow boundaries.  First, we want to use the Charbonnier penalty in our flow objective function.  With the Charbonnier penalty on flow smoothness, our objective function becomes
 \begin{multline} \label{eq:objectivec}
 e = \int \int_{img} (I_x \cdot X + I_y \cdot Y + I_t)^2 + \\
 \lambda \sqrt{X_x^2 + X_y^2 + Y_x^2 + Y_y^2 + \epsilon} \; dA 
 \end{multline}
+At the end of this section, we will also apply the Lorentzian penalty.
 
 To derive a minimum for this function, it's best to express it in discrete form:
 \begin{multline} \label{eq:objectivecDiscrete}
@@ -438,6 +440,21 @@ The results of this algorithm on the Middlebury training set are shown in Figure
 
 However, adding the Charbonnier penalty seems to decrease performance on test cases with large magnitude flows, like the Urban2 example discussed in Figure \ref{fig:urban2}.  To fix this problem, we add multi-resolution optimization to our Charbonnier algorithm.  This results in a marked improvement in performance (see the ``Multi-res Charbonnier" column of Figure \ref{fig:table}), beating the multi-resolution HS algorithm on every test case.
 
+We can use Eq. \ref{eq:genericpenalty} to easily apply the Lorentzian penalty to the flow smoothness term.  The Lorentzian penalty is even more leniant towards large jumps in flow than the Charbonnier penalty - in fact, it is concave, not convex, with respect to flow gradient.  It is defined as:
+\begin{equation} \label{eq:lor}
+f(Reg) = \log(1 + \frac{Reg}{2 \sigma^2})
+\end{equation}
+
+Therefore, the weighting term is
+\begin{equation} \label{eq:lorweight}
+W(i,j) = \frac{1}{2 \sigma^2 + Reg(i,j)}
+\end{equation}
+In our trials, we used $\sigma=1$.
+
+The results on the Middlebury training set are shown in Figure \ref{fig:table}.  In light of the performance of the Charbonnier-penalized HS algorithm we did not run single-resolution optimization.  In general, the Lorentzian penalty results in more accuracy than the quadratic penalty, but less accuracy than the Charbonnier penalty.  
+
+\section{Conclusion}
+
 To summarize all of the algorithms presented in this paper, Figure \ref{fig:venus} compares their performance on the ``Venus" image.  We can see that running that solving for the flow at multiple resolutions helps discover regions of large flow, like in the lower left corner of the image.  On the right-center of the image, adding a Charbonnier penalty makes the top boundary of the newspaper cleaner.
 
 \begin{figure}
@@ -450,7 +467,11 @@ To summarize all of the algorithms presented in this paper, Figure \ref{fig:venu
 \includegraphics[width=0.48 \columnwidth] {venus_3.png} 
 \includegraphics[width=0.48 \columnwidth] {venus_4.png}
 
-\caption{Comparing all four algorithm variations on the Venus test image from the Middlebury dataset.  Top: one frame of the original test images; ground truth flow.  Middle: HS; Classic++.  Bottom: Charbonnier; Charbonnier with multi-resolution optimization.  Using a multi-resolution pyramid helps the algorithm discover large areas of high-magnitude flow, while the Charbonnier penalty makes edges somewhat better-defined.}
+
+\includegraphics[width=0.48 \columnwidth] {venus_lor_1level.png}
+\includegraphics[width=0.48 \columnwidth] {venus_lor.png}
+
+\caption{Comparing all four algorithm variations on the Venus test image from the Middlebury dataset.  Top row: one frame of the original test images; ground truth flow.  Second row: HS; Classic++.  Third row: Charbonnier; Charbonnier with multi-resolution optimization.  Fourth row: Lorentzian; Lorentzian with multi-resolution optimization.  Using a multi-resolution pyramid helps the algorithm discover large areas of high-magnitude flow, while the Charbonnier penalty makes edges somewhat better-defined.}
 \label{fig:venus}
 \end{figure}
 
