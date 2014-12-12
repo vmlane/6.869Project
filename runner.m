@@ -1,6 +1,6 @@
 addpath('./flow-code-matlab');
-% titles = {'Dimetrodon', 'Grove2', 'Grove3', 'Hydrangea', 'RubberWhale', 'Urban2', 'Urban3', 'Venus'};
-titles = {'Urban2'};
+titles = {'Dimetrodon', 'Grove2', 'Grove3', 'Hydrangea', 'RubberWhale', 'Urban2', 'Urban3', 'Venus'};
+% titles = {'Urban2'};
 nTitles = length(titles);
 results = [];
 for i = 1:nTitles
@@ -12,8 +12,7 @@ for i = 1:nTitles
 
     options = struct();
 
-    options.numPyramidLevels = 5;
-    options.numGncLevels = 2;
+    options.numGncLevels = 1;
     options.ratio = .5;
     options.sigma = sqrt(1/options.ratio)/sqrt(2);
     options.gncRatio = 1/1.25;
@@ -22,7 +21,9 @@ for i = 1:nTitles
     options.penalty = 2;
     options.limit = false;
     
-    m = 5;
+    options.interp = 'bi-cubic';
+    
+    m = 9;
 %     options.medfiltsize = [];
     options.medfiltsize = [m m];
 

@@ -288,9 +288,9 @@ Test cases in which large objects moved required more pyramid levels than those 
 \label{fig:urban2}
 \end{figure}
 
-\section{Median Filtering}
+\section{Smoothing}
 Applying a median filter between each iteration at each pyramid level significantly improves the optical flow estimation by eliminating outliers. We applied various sizes of median filters and discovered that each image had a different optimal size of median filter. However, for most images, while adding a filter had a significant score impact, changes in the size of the median filter had a small impact on improving the optical flow estimation.  Based on the data \ref{fig:medFiltTable}, the best median filter size to apply to all images is 9x9, since increasing the size to 13x13 resulted in very small (less than 2\%) improvements. Certain images had much more significant improvements when a median filter applied, images with the greatest improvement had high optical flow estimation scores and the objects moving in the image were larger than in the images with less improvement.
-
+Between each iteration of computing the flow, we used two different interpolation methods, cubic and bi-cubic. Bi-cubic interpolation resulted in better performance. The average optical flow score of the Middlebury dataset for bi-cubic interpolation was $0.6338$ and for cubic interpolation was $0.6631$. Therefore, the bi-cubic interpolation resulted in a five-percent improvement. For both filter types we used 5 pyramid levels, the charbonnier penalty function, a 9x9 median filter.
 \begin{figure*}
 \begin{tabularx}{1.0\textwidth} {|X |X |X |X |X |X|}
 \hline

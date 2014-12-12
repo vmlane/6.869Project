@@ -4,6 +4,7 @@ function [u,v] = computeFlow(im1,im2,options)
     %TODO: texture decomposition
     
     % Make image pyramids
+    options.numPyramidLevels = 1 + floor( log(min(size(im1,1), size(im1,2))/16) / log(1/options.ratio) );
     pyramid1 = makeImagePyramid(im1,options.numPyramidLevels,options.ratio,options.sigma);
     pyramid2 = makeImagePyramid(im2,options.numPyramidLevels,options.ratio,options.sigma);
     
