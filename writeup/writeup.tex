@@ -49,10 +49,9 @@ Optical flow algorithms calculate the movement of objects between consecutive fr
 
 \section{Introduction}
 
-Optical flow can be applied to a variety of problems, for example, it allows driverless vehicles to detect the movement of pedestrians and other cars on the road. It also allows the car to estimate its own movement. Given the motion of pixels in a series of video frames, optical flow methods can interpolate pixel locations between frames, resulting in a smoother video and a sharper display when bandwidth is limited.
+Optical flow can be applied to a variety of problems; for example, it allows driverless vehicles to detect the movement of pedestrians and other cars on the road. It also allows the car to estimate its own movement. Given the motion of pixels in a series of video frames, optical flow methods can interpolate pixel locations between frames, resulting in a smoother video and a sharper display when bandwidth is limited.
 
-Optical flow algorithms attempt to detect the motion of an object relative to the camera by measuring the temporal change in brightness patterns of an image. Estimations of optical flow rely on the assumption that the brightness of a pixel remains the same when it moves.
-At its core, it is the problem of calculating where each pixel moves from one frame of a video to the next. \cite{fleet} However, optical flow is not the exactly the same as a motion field. For example, a rotating perfectly uniform sphere will have no optical flow, because the brightness pattern remains the same, but it does have a motion field. In contrast, if we fix the sphere and move the light source, there will be an optical flow field due to change in brightness even though the sphere does not move.
+Optical flow algorithms attempt to detect the motion of an object relative to the camera by measuring the temporal change in brightness patterns of an image. Estimations of optical flow rely on the assumption that the brightness of a pixel remains the same when it moves.  With this assumption, the optical flow problem becomes the calculation of where each pixel moves from one frame of a video to the next. \cite{fleet} However, optical flow is not the exactly the same as a motion field. For example, a rotating perfectly uniform sphere will have no optical flow, because the brightness pattern remains the same, but it does have a motion field. In contrast, if we fix the sphere and move the light source, there will be an optical flow field due to change in brightness even though the sphere does not move.
 
 The changes in pixel intensity between frames are represented as a vector field. The motion of each pixel is represented as a flow vector $[x, y]$. The essential constraint governing the image $I$ and the flow fields $X$ and $Y$ is
 \begin{equation} \label{eq:constraint}
@@ -65,11 +64,11 @@ In qualitative terms, the change in a pixel intensity over time ($I_t$) has to e
 I[x, y, t_1] = I[x + U[x, y], y + V[x, y], t_2]
 \end{equation}
 
-However, this equation results in only one constraint per pixel, whereas there are two flow vector unknowns per pixel. Therefore, this problem is underconstrained. \cite{wu} Optical flow algorithms will add additional constraints, called a penalty function, usually to represent the requirement that the optical flow of two neighboring pixels is similar. Intuitively, this is due to the fact that in natural images neighboring pixels do not move independently of each other. While almost all optical flow algorithms use Eq. \ref{eq:constraint}, different algorithms apply different penalty functions and numerical techniques to solve or optimize the resulting equations.
+However, this equation results in only one constraint per pixel, whereas there are two flow vector unknowns per pixel. Therefore, this problem is underconstrained. \cite{wu} Optical flow algorithms will add additional constraints, called penalty functions, usually requiring that the optical flow of two neighboring pixels is similar.  Intuitively, this is because neighboring pixels do not move independently of each other in natural images. While almost all optical flow algorithms use Eq. \ref{eq:constraint}, different algorithms apply different penalty functions and numerical techniques to solve or optimize the resulting equations.
 
 \section{Prior Work}
 
-The optical flow formulation was originally proposed by Horn and Schunck (HS) \cite{horn}, who recognized that discontinuities only occur as a result of occlusion, and since neighboring pixels are generally part of the same object, they do not move independently. This assumption of spatial smoothness allowed them to constrain the problem by minimizing the square of the gradient of the flow vector. A flow field that changes abruptly from pixel to pixel will have a large-magnitude gradient on average, whereas a smooth flow field, such as a brightness pattern, will have a small gradient. The HS algorithm minimizes the following objective function
+The optical flow formulation was originally proposed by Horn and Schunck (HS) \cite{horn}, who recognized that neighboring pixels are generally part of the same object, so they tend to flow in the same direction. This assumption of spatial smoothness allowed them to constrain the problem by penalizing the square of the gradient of the flow vector. A flow field that changes abruptly from pixel to pixel will have a large-magnitude gradient on average, whereas a smooth flow field, such as a brightness pattern, will have a small gradient. The HS algorithm minimizes the following objective function:
 \begin{multline} \label{eq:hsObj}
 E( \mathbf{u}, \mathbf{v}) = \sum\limits_{i,j} (\rho(I_1(i,j) - I_2(i+u_{i,j},j+v_{i,j}))^2 \\ 
 + \lambda (\rho(u_{i,j}-u_{i+1,j}) + \rho(u_{i,j}-u_{i,j+1}) \\ 
@@ -81,25 +80,25 @@ The optical flow estimates produced by the HS objective function are significant
 \begin{equation} \label{eq:cPenalty}
 \rho(x) = \sqrt{x^2 + \epsilon^2}
 \end{equation}
-Intuitively, penalty terms with smaller powers are more tolerant of sudden changes in flow direction, which results in sharper edges in the flow field. The convexity of the Charbonnier function because it is easier to optimize than non-convex alternatives, such as the Lorentzian penalty function (Eq. \ref{eq:lPenalty}).
+Intuitively, penalty terms with smaller powers are more tolerant of sudden changes in flow direction, which results in sharper edges in the flow field. Non-convex alternatives, which are even more tolerant of sudden changes of flow at boundaries, have also been used.  One example is the Lorentzian penalty function:
 \begin{equation} \label{eq:lPenalty}
-\rho(x) = \log{1 + \frac{x^2}{2*\sigma^2}}
+\rho(x) = \log(1 + \frac{x^2}{2\sigma^2})
 \end{equation}
 
 We implemented the Classic++ algorithm developed by Sun et al  \cite{sun}. This approach improves upon the HS algorithm by using multi-resolution optimization, median filtering, and the Charbonnier penalty function (Eq. \ref{eq:cPenalty}).
 
 \section{Solving the HS Objective Function}
 
-To find optical flow, we need to minimize the objective function found in Eq. \ref{eq:hsObj}.  To do this, we will use the Euler-Lagrange equation, which gives us conditions for minimizing $E$.  Namely, if $e$ depends on a function $L$ and
+To find optical flow, we need to minimize the objective function found in Eq. \ref{eq:hsObj}.  To do this, we will use the Euler-Lagrange equation, which gives us conditions for minimizing $E$.  Namely, if $E$ depends on a function $L$ and
 \begin{equation} \label{eq:eulerL}
 E = \int \int L(x, y, f, f_x, f_y) dxdy
 \end{equation}
-then $e$ is minimized when 
+then $E$ is minimized when 
 \begin{equation} \label{eq:eulerCondition}
 \frac{\partial L}{\partial f} - \frac{\partial}{\partial x} \frac{\partial L}{\partial f_x} - \frac{\partial}{\partial y} \frac{\partial L}{\partial f_y} = 0
 \end{equation}
 
-The Euler-Lagrange equation applies directly to our problem, if we use two instances of it to constrain the flow fields $X$ and $Y$ separately.  For us, $L$ is simply the objective function $e$: 
+The Euler-Lagrange equation applies directly to our problem, if we use two instances of it to constrain the flow fields $X$ and $Y$ separately.  For us, $L$ is simply the objective function $E$: 
 \begin{multline} \label{eq:eulerL2}
 L =  \int \int_{img} (I_x \cdot X + I_y \cdot Y + I_t)^2 + \\
 \lambda ( X_x^2 + X_y^2 + Y_x^2 + Y_y^2 ) dA 
@@ -145,7 +144,7 @@ I_x I_t \\
 I_y I_t
 \end{array} \right]
 \end{multline}
-There are some subtleties hiding in this equation.  $X$ and $Y$ are vectors of length $w \times h$ - they are the flow vectors smushed into one column.  All of the image derivatives ($I_x$, etc.) in the left side matrix are diagonal matrices of width and height each $w \times h$.  They contain the image data along the diagonal, the same way $X$ and $Y$ contain the flow vector data in a column.  $D_x^2$ performs a second image derivative in the $x$ direction to the flow vector on which it is applied.  (This is an exception to our convention that matrix multiplication means pairwise product.  $D_x$ is applied like a dot product.)  Finally, the right hand side is in fact a single column of size $2wh \times 1$.  Unlike on the left hand side $I_x I_t$ and $I_y I_t$ are single-column, not diagonal.
+There are some subtleties hiding in this equation.  $X$ and $Y$ are vectors of length $wh$ - they are the flow fields smushed into one column.  All of the image derivatives ($I_x$, etc.) in the left side matrix are diagonal matrices of size $(wh) \times (wh)$.  They contain the image data along the diagonal, with the same matrix-to-array ordering as $X$ and $Y$.  $D_x^2$ performs a second image derivative in the $x$ direction to the flow vector on which it is applied.  Finally, the right hand side is in fact a single column of size $2wh \times 1$.  Unlike on the left hand side $I_x I_t$ and $I_y I_t$ are single-column, not diagonal.
 
 \section{Implementing the Euler-Lagrange Solution}
 
@@ -168,7 +167,7 @@ L(a, b) = \begin{cases}
 
 We calculate the image derivatives $I_x$ and $I_y$ using a 5-point filter $\frac{1}{12}[-1, 8, 0, -8, 1]$, and we used $\lambda = 0.1$.  With the terms in Eq. \ref{eq:eulerBlock} defined, solving for $X$ and $Y$ is simply a matter of matrix inversion.
 
-In practice, we run multiple iterations of Eq. \ref{eq:eulerBlock} to find the final flow.  This is because the HS objective is only a linearized version of Eq. \ref{eq:discrete}, the true flow error.  For large flow values, it is not accurate.  After each iteration, we warp image 1 using the flow field found so far.  We then run another iteration using the warped image 1, and add the new flow to the total flow so far.
+In practice, we run multiple iterations of Eq. \ref{eq:eulerBlock} to find the final flow.  This is because the HS objective is only a linearized version of Eq. \ref{eq:discrete}, the true flow error.  For large flow values, it is not accurate.  After each iteration, we warp image 2 using the negation of the flow field found so far.  (If the flow were perfect, image 2 would warp directly into image 1.)  We then run another iteration using the warped image 2, and add the new flow to the total flow so far.
 
 Unfortunately, there is no obvious stopping point for this algorithm.  Repeatedly minimizing the HS objective will refine the flow, making the warped image 1 look more and more like image 2.  However, this results in ``overfitting".  The ground truth flow is not in fact a perfect transformation from image 1 to image 2 - there are changes in illumination and occlusion between the two images.  Empirically, we found that running too many iterations caused the endpoint error to increase.  In our tests, we used 10 iterations, the same number used in \cite{sun}.
 
@@ -273,9 +272,11 @@ Average & 0.7352 & 0.6512 & 0.8285 \\
 \end{figure}
 
 From Figure \ref{fig:table}, it is obvious that our implementation of HS does not perform equally well on all test cases.  Figure \ref{fig:urban2} shows the test image with the highest error (``Urban2").  Urban2 has flow vectors with much greater magnitude, compared to RubberWhale.  The building in the foreground moves particularly quickly between frames.  The displacement is 5 pixels on average, which is further than the spatial derivatives can propagate information.  Therefore, HS cannot track the displacement of the building.  
+
 \section{Multi-Resolution Optimization}
-To improve estimates of large displacment, our algorithm use incremental multi-resolution optimization. It constructs an image pyramid, using gaussian filtering at each level. The optical flow is first computed for the image at the smallest level and it is is used as the initial estimate for the next-largest pyramid level, this is repeated until the largest pyramid level is reached. Multi-resoltion not only decreases the convergence time, but it increases accuracy when large moving objects of uniform brightness. Accuracy improves because at the largest pyramid level, the optical flow algorithm only detects movement of the edges of the object. However, the algorithm better detects the movement of the entire object when multi-resolution optimization is used, because the flow of the objects inner pixels is propogated through the pyramid levels.
-Test cases in which large objects moved required more pyramid levels than those in which small objects moved, the larger the object, the more pyramid levels required to achieve the best score. Too many pyramid levels worsened the score, this is likely to due the fact that at the lowest level the object becomes too small and no noticeable movement occurs.
+To improve estimates of large displacment, we add incremental multi-resolution optimization to our algorithm.  We construct an image pyramid, using Gaussian filtering at each level. The optical flow is first computed for the image at the smallest level, and is then used as the initial estimate for the flow on the next-largest pyramid level.  This is repeated until the largest pyramid level is reached. Multi-resolution requires less computation power for the same flow accuracy, since it is much easier to compute flow at the higher levels of the pyramid, which contain smaller images.  It also improves tracking of fast-moving objects.  Accuracy improves because at the largest pyramid level, the optical flow algorithm only detects movement of the edges of the object. However, the algorithm better detects the movement of the entire object when multi-resolution optimization is used, because the flow of the objects inner pixels is propogated through the pyramid levels.
+
+Test cases in which large objects moved required more pyramid levels than those in which small objects moved; and the larger the object, the more pyramid levels required to achieve the best score. Too many pyramid levels worsened the score - this is likely to due the fact that at the lowest level the object becomes too small and no noticeable movement occurs.
 
 \begin{figure}
 \includegraphics[width=0.48 \columnwidth] {urban2_input.png} 
@@ -284,12 +285,14 @@ Test cases in which large objects moved required more pyramid levels than those 
 \includegraphics[width=0.48 \columnwidth] {urban2_multires.png} 
 \includegraphics[width=0.48 \columnwidth] {urban2_truth.png} 
 
-\caption{Results for the ``Urban2" test image.  Top left: one of the two input frames.  Top right: optical flow using the HS algorithm, with average error 6.95.  Bottom left: optical flow using Classic++, with average error 1.79.  Bottom right: ground truth.  The flow magnitude is too large for HS to handle correctly.  Using classic++, we can locate large flows with much better accuracy.}
+\caption{Results for the ``Urban2" test image.  Top left: one of the two input frames.  Top right: optical flow using the HS algorithm, with average error 6.95.  Bottom left: optical flow using Classic++, with average error 1.79.  Bottom right: ground truth.  The flow magnitude is too large for HS to handle correctly.  Using Classic++, we can locate large flows with much better accuracy.}
 \label{fig:urban2}
 \end{figure}
 
-\section{Median Filtering}
-Applying a median filter between each iteration at each pyramid level significantly improves the optical flow estimation by eliminating outliers. We applied various sizes of median filters and discovered that each image had a different optimal size of median filter. However, for most images, while adding a filter had a significant score impact, changes in the size of the median filter had a small impact on improving the optical flow estimation.  Based on the data in Figure \ref{fig:medFiltTable}, the best median filter size to apply to all images is 9x9, since increasing the size to 13x13 resulted in very small (less than 2\%) improvements. Certain images had much more significant improvements when a median filter applied, images with the greatest improvement had high optical flow estimation scores and the objects moving in the image were larger than in the images with less improvement.
+\section{Smoothing}
+Applying a median filter between each iteration at each pyramid level significantly improves the optical flow estimation by eliminating outliers. We applied various sizes of median filters and discovered that each image had a different optimal size of median filter. However, for most images, while adding a filter had a significant score impact, changes in the size of the median filter had only a small impact on improving the optical flow estimation.  Based on the data in Figure \ref{fig:medFiltTable}, the best median filter size to apply to all images is 9x9, since increasing the size to 13x13 resulted in very small (less than 2\%) improvements. Certain images had much more significant improvements when a median filter applied.  The images with the greatest improvement tended to have high average EPEs to begin with, as well as large moving objects.
+
+To compute the residual error after each round of flow computation, we warped image 2 back into image 1, using the computed flow field.  To do this warping, we used two different interpolation methods, cubic and bi-cubic. Bi-cubic interpolation resulted in better performance. The average optical flow score of the Middlebury dataset for bi-cubic interpolation was $0.6338$ and for cubic interpolation was $0.6631$. Therefore, the bi-cubic interpolation resulted in a five-percent improvement. For both filter types we used 5 pyramid levels, the charbonnier penalty function, a 9x9 median filter.
 
 \begin{figure*}
 \begin{tabularx}{1.0\textwidth} {|X |X |X |X |X |X|}
@@ -312,14 +315,14 @@ Venus &  1.0443 & .6232 & 0.5716 & \bf{0.5696} &  0.5725 \\
 \section{Solving Optical Flow with Other Penalties}
 We would now like to change the penalty on flow smoothness.  We will experiment with some ``robust penalties", which tolerate some sudden jumps in flow value, allowing for sharper flow boundaries.  First, we want to use the Charbonnier penalty in our flow objective function.  With the Charbonnier penalty on flow smoothness, our objective function becomes
 \begin{multline} \label{eq:objectivec}
-e = \int \int_{img} (I_x \cdot X + I_y \cdot Y + I_t)^2 + \\
+E = \int \int_{img} (I_x \cdot X + I_y \cdot Y + I_t)^2 + \\
 \lambda \sqrt{X_x^2 + X_y^2 + Y_x^2 + Y_y^2 + \epsilon} \; dA 
 \end{multline}
 At the end of this section, we will also apply the Lorentzian penalty.
 
 To derive a minimum for this function, it's best to express it in discrete form:
 \begin{multline} \label{eq:objectivecDiscrete}
-e = \sum_{i,j} (I_x(i, j) X(i, j) + I_y(i, j) Y(i, j) + I_t(i, j))^2 \\
+E = \sum_{i,j} (I_x(i, j) X(i, j) + I_y(i, j) Y(i, j) + I_t(i, j))^2 \\
 + \lambda \sqrt{
 \begin{array}{c}
 (X(i, j) - X(i-1, j))^2 \\
@@ -340,12 +343,12 @@ Reg(i,j) = (X(i,j) - X(i-1,j))^2 + ...
 
 Now, our objective function becomes:
 \begin{equation} \label{eq:shortobjcdis}
-e = \sum_{i,j} Err(i,j)^2 + \lambda \sqrt{Reg(i,j) + \epsilon }
+E = \sum_{i,j} Err(i,j)^2 + \lambda \sqrt{Reg(i,j) + \epsilon }
 \end{equation}
 To minimize the objective function in Eq. \ref{eq:shortobjcdis}, we take the straightforward approach: calculate a derivative with respect to $X(i, j)$.  By setting each derivative equal to $0$, we hope to get an approximation for the $X$ and $Y$ that minimize $e$.
 \begin{equation}
 \begin{aligned}
-&\frac{\partial e}{\partial X(i, j)} = \frac{\partial Err(i,j)}{\partial X(i, j)} \cdot 2 Err(i, j) \\
+&\frac{\partial E}{\partial X(i, j)} = \frac{\partial Err(i,j)}{\partial X(i, j)} \cdot 2 Err(i, j) \\
 &+ \lambda \frac{\partial Reg(i,j)}{\partial X(i, j)} \cdot \frac{1}{2} (Reg(i, j) + \epsilon)^{-0.5}  \\
 &+ \lambda \frac{\partial Reg(i+1,j)}{\partial X(i, j)} \cdot \frac{1}{2} (Reg(i+1, j) + \epsilon)^{-0.5}  \\
 &+ \lambda \frac{\partial Reg(i,j+1)}{\partial X(i, j)} \cdot \frac{1}{2} (Reg(i, j+1) + \epsilon)^{-0.5}
@@ -375,7 +378,8 @@ Now, we want to evaluate the individual partial derivatives:
 Finally, we assume that nearby regularization terms are approximately equal: $Reg(i, j) \approx Reg(i+1,j) \approx Reg(i,j+1)$.  We can now simplify the derivative in Eq. \ref{eq:dedx}, resulting in a very familiar form:
 \begin{equation} \label{eq:leastsq}
 \begin{aligned}
-0 = \frac{\partial e}{\partial X(i, j)} &= 2I_x(i, j) Err(i, j)  \\
+0 = \frac{\partial e}{\partial X(i, j)} \\
+ = 2I_x(i, j) & Err(i, j)   \\
 +\lambda(&\\
 &4X(i, j) - X(i+1,j) \\
 &- X(i-1,j) - X(i,j+1) - X(i,j-1) \\
@@ -417,7 +421,7 @@ I_x I_t \\
 I_y I_t
 \end{array} \right]
 \end{multline}
-Once again, an aside on notation is necessary here.  The term $\lambda W (D_x^2 + D_y^2) X$ refers to the following steps: (1) evaluate the sum of the second derivatives at $X$ using the Laplacian filter.  Put these values in a column vector of length $wh$, because $X$ is a column vector and $D_x$ is an operator.  (2) Multiply the column vector by the diagonal matrix $\lambda W$.
+Once again, an aside on notation is necessary here.  The term $\lambda W (D_x^2 + D_y^2) X$ refers to the following steps: (1) evaluate the sum of the second derivatives of $X$ using the Laplacian filter.  Put these values in a column vector of length $wh$, because $X$ is a column vector and $D_x$ is an operator.  (2) Multiply the column vector by the diagonal matrix $\lambda W$.
 
 To solve for the flow using this equation, we use the same technique developed for solving the original HS equation, with one addition: we recalculate $W$ at every turn.  $W$ is recalculated using the values of $X$ and $Y$ found in the last iteration, according to Eq. \ref{eq:weights}.
 
@@ -456,7 +460,9 @@ The results on the Middlebury training set are shown in Figure \ref{fig:table}. 
 
 \section{Conclusion}
 
-To summarize all of the algorithms presented in this paper, Figure \ref{fig:venus} compares their performance on the ``Venus" image.  We can see that running that solving for the flow at multiple resolutions helps discover regions of large flow, like in the lower left corner of the image.  On the right-center of the image, adding a Charbonnier penalty makes the top boundary of the newspaper cleaner.
+It should be possible to squeeze additional performance out of the optical flow algorithms presented in this paper, especially by improving the optimization technique.  We could be smarter in choosing how many rounds of optimization to perform at each pyramid level.  Currently, we use a fixed 5 rounds per level, because it is not obvious how to check for convergence.  We could also use a more robust method for handling the less-convex penalty functions (Charbonnier and Lorentzian).  In \cite{sun}, Sun and Black use a graduated non-convexity scheme, and achieve an average EPE of around 0.3 for a Charbonnier penalty function.
+
+To summarize all of the algorithms presented in this paper, Figure \ref{fig:venus} compares their performance on the ``Venus" image.  We can see that solving for the flow at multiple resolutions helps discover regions of large flow, like in the lower left corner of the image.  On the right-center of the image, adding a Charbonnier penalty makes the top boundary of the newspaper cleaner.
 
 \begin{figure}
 \includegraphics[width=0.48 \columnwidth] {venus.png} 

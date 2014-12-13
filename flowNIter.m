@@ -3,7 +3,7 @@ function [ u, v ] = flowNIter(im1, im2, u, v, options)
 
 for i = 1:options.numWarpIters
     % compute the partial derivatives
-    [dt, dx, dy] = applyFlow(im1,im2,u,v);
+    [dt, dx, dy] = applyFlow(im1,im2,u,v,options);
     
     % Make laplacian operator
     laplacian = makeLaplacian(width, height, u, v, options);
